@@ -2,11 +2,11 @@
 
 > Simulation of a transport network
 
-## Autheurs
-- __Emilie ANTONIUTTI__ emilie.antoniutti@etu.enseeiht.fr
-- __Thibault BERTIN__ thibault.bertin@etu.enseeiht.fr
-- __Simon DEMMER__ simon.demmer@etu.enseeiht.fr
-- __Clément LE BIHAN__ clement.lebihan@etu.enseeiht.fr
+## Auteurs
+- __Emilie ANTONIUTTI__ -- emilie.antoniutti@etu.enseeiht.fr
+- __Thibault BERTIN__ -- thibault.bertin@etu.enseeiht.fr
+- __Simon DEMMER__ -- simon.demmer@etu.enseeiht.fr
+- __Clément LE BIHAN__ -- clement.lebihan@etu.enseeiht.fr
 
 ## TO DO
 
@@ -24,8 +24,8 @@
 ## MORE INFOS
 
 **If you want to see our simulation.ttt :**
-	- Execute ~/Projet_Long/V-Rep/vrep.sh
-	- Then open Simulation.ttt
+   - Execute ~/Projet_Long/V-Rep/vrep.sh
+   - Then open Simulation.ttt
 
 ## License
 
