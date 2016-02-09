@@ -1,24 +1,26 @@
-PROJET LONG
+# Projet_Long GEA N7 2016
 
-Emilie ANTONIUTTI
-Thibault BERTIN
-Simon DEMMER
-Clément LE BIHAN
+> Simulation of a transport network
 
-TODO :
-	gedit ~/.bashrc
-	Add this lines :
-		source /opt/ros/jade/setup.bash
-		export VREP_ROOT_DIR=~/Projet_Long/V-Rep/
-		source ~/Projet_Long/catkin_ws/devel/setup.bash
-	cd /Projet_Long/catkin_ws
-	catkin_make
+## Autheurs
+- [Emilie ANTONIUTTI](emilie.antoniutti@etu.enseeiht.fr) - Responsable Aiguillage
+- [Thibault BERTIN](thibault.bertin@etu.enseeiht.fr) - Responsable Cellule 
+- [Simon DEMMER](simon.demmer@etu.enseeiht.fr) - Responsable Navette
+- [Clément LE BIHAN](clement.lebihan@etu.enseeiht.fr) - Responsable Ros Node
 
-Don't forget to launch roscore before launching our application
-	~/Projet_Long/simulation
+## License
 
+[![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
+
+## TO DO
+
+- [in ~/.bashrc]() - Add this lines : ["source /opt/ros/jade/setup.bash","export VREP_ROOT_DIR=~/Projet_Long/V-Rep/","source ~/Projet_Long/catkin_ws/devel/setup.bash"]
+- cd /Projet_Long/catkin_ws
+- catkin_make
+- Don't forget to launch roscore before launching our application
+- ~/Projet_Long/simulation
+
+## MORE INFOS
 If you want to see our simulation.ttt :
-	~/Projet_Long/V-Rep/vrep.sh
-	Then open Simulation.ttt with vrep
-	
-# Projet_Long
+- ~/Projet_Long/V-Rep/vrep.sh
+- Then open Simulation.ttt with vrep
