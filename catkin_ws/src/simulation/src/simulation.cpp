@@ -8,12 +8,12 @@
 #include <string>
 #include <math.h>
 #include <cmath>
-#include <stdint.h>
 
 using namespace std;
 
 // Image Streaming
 #include <image_transport/image_transport.h>
+#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
 
@@ -34,7 +34,7 @@ using namespace std;
 
 #define NB_AIGUILLAGE 12
 
-
+cv::Mat image_Capteur;
 
 int PS01,PS02,PS03,PS04,PS05,PS06,PS07,PS08,PS09,PS10,PS11,PS12,PS13,PS14,PS15,PS16;
 int CP01,CP02,CP03,CP04,CP05,CP06,CP07,CP08,CP09,CP10;
@@ -112,29 +112,52 @@ void CapteurCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 	D11G = (msg->data & (int32_t)pow(2,21)) > 0;
 	D12D = (msg->data & (int32_t)pow(2,22)) > 0;
 	D12G = (msg->data & (int32_t)pow(2,23)) > 0;
-
 }
-
 
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  try
-  {
     cv::imshow("Simulation", cv_bridge::toCvShare(msg, "bgr8")->image);
-  }
-  catch (cv_bridge::Exception& e)
-  {
-    ROS_ERROR("Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
-  }
 }
 
-void SetAiguillagePosition(ros::ServiceClient client_simRosSetJointTargetPosition, int handle, double angle)
+void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	// CP
+	circle(image_Capteur, cv::Point(54, 359), 5, cv::Scalar(0,255*CP01,255-255*CP01), -1, 8 );
+	circle(image_Capteur, cv::Point(95, 237), 5, cv::Scalar(0,255*CP02,255-255*CP02), -1, 8 );
+    	circle(image_Capteur, cv::Point(446, 237), 5, cv::Scalar(0,255*CP03,255-255*CP03), -1, 8 );
+	circle(image_Capteur, cv::Point(785, 348), 5, cv::Scalar(0,255*CP04,255-255*CP04), -1, 8 );
+	circle(image_Capteur, cv::Point(814, 236), 5, cv::Scalar(0,255*CP05,255-255*CP05), -1, 8 );
+	circle(image_Capteur, cv::Point(1005, 24), 5, cv::Scalar(0,255*CP06,255-255*CP06), -1, 8 );
+	circle(image_Capteur, cv::Point(912, 136), 5, cv::Scalar(0,255*CP07,255-255*CP07), -1, 8 );
+	circle(image_Capteur, cv::Point(577, 137), 5, cv::Scalar(0,255*CP08,255-255*CP08), -1, 8 );
+	circle(image_Capteur, cv::Point(242, 27), 5, cv::Scalar(0,255*CP09,255-255*CP09), -1, 8 );
+	circle(image_Capteur, cv::Point(182, 136), 5, cv::Scalar(0,255*CP10,255-255*CP10), -1, 8 );
+
+	// PS
+	circle(image_Capteur, cv::Point(15, 191), 5, cv::Scalar(0,255*PS01,255-255*PS01), -1, 8 );
+	circle(image_Capteur, cv::Point(201, 237), 5, cv::Scalar(0,255*PS02,255-255*PS02), -1, 8 );
+	circle(image_Capteur, cv::Point(244, 345), 5, cv::Scalar(0,255*PS03,255-255*PS03), -1, 8 );
+	circle(image_Capteur, cv::Point(331, 237), 5, cv::Scalar(0,255*PS04,255-255*PS04), -1, 8 );
+	circle(image_Capteur, cv::Point(573, 237), 5, cv::Scalar(0,255*PS05,255-255*PS05), -1, 8 );
+	circle(image_Capteur, cv::Point(705, 236), 5, cv::Scalar(0,255*PS06,255-255*PS06), -1, 8 );
+	circle(image_Capteur, cv::Point(944, 238), 5, cv::Scalar(0,255*PS07,255-255*PS07), -1, 8 );
+	circle(image_Capteur, cv::Point(1004, 347), 5, cv::Scalar(0,255*PS08,255-255*PS08), -1, 8 );
+	circle(image_Capteur, cv::Point(1008, 188),5, cv::Scalar(0,255*PS09,255-255*PS09), -1, 8 );
+	circle(image_Capteur, cv::Point(847, 137), 5, cv::Scalar(0,255*PS10,255-255*PS10), -1, 8 );
+	circle(image_Capteur, cv::Point(776, 29), 5, cv::Scalar(0,255*PS11,255-255*PS11), -1, 8 );
+	circle(image_Capteur, cv::Point(706, 136), 5, cv::Scalar(0,255*PS12,255-255*PS12), -1, 8 );
+	circle(image_Capteur, cv::Point(453, 136), 5, cv::Scalar(0,255*PS13,255-255*PS13), -1, 8 );
+	circle(image_Capteur, cv::Point(316, 137), 5, cv::Scalar(0,255*PS14,255-255*PS14), -1, 8 );
+	circle(image_Capteur, cv::Point(75, 137), 5, cv::Scalar(0,255*PS15,255-255*PS15), -1, 8 );
+	circle(image_Capteur, cv::Point(21, 27), 5, cv::Scalar(0,255*PS16,255-255*PS16), -1, 8 );
+    cv::imshow("EtatCapteurs", image_Capteur);
+}
+
+void SetSwitchPosition(ros::ServiceClient client_simRosSetJointTargetPosition, int handle, double angle)
 {
 		static vrep_common::simRosSetJointTargetPosition srv_SetJointTargetPosition;
-				
 		srv_SetJointTargetPosition.request.handle = handle;		
 		srv_SetJointTargetPosition.request.targetPosition = angle*M_PI/180;			
-
 		client_simRosSetJointTargetPosition.call(srv_SetJointTargetPosition);
 }
 
@@ -146,84 +169,64 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     else if (pid == 0) 
 		{
-          		//system("~/Projet_Long/V-Rep/vrep.sh -h -sXXX -q ~/Projet_Long/Simulation.ttt &");
+          		system("~/Projet_Long/V-Rep/vrep.sh -h -sXXX -q ~/Projet_Long/Simulation.ttt");
 		}
     else if (pid > 0) 
 		{
 
-			//while(system("pidof -x vrep > /dev/null")) // Attente d'un process du nom de "vrep"
-
+			while(system("pidof -x vrep > /dev/null")) // Attente d'un process du nom de "vrep"
+			sleep(2);
+		
 			//Initialisation du noeud
 			ros::init(argc, argv, "simulation");
-			ros::NodeHandle n,nh;
+			ros::NodeHandle nh;
 
 			///////// SUBSCRIBERS ////////
 				// Image Streaming 
-	 		cv::namedWindow("Simulation");
-			cv::startWindowThread();
-			image_transport::ImageTransport it(nh);
-			//image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
+		 		cv::namedWindow("Simulation");
+				cv::startWindowThread();
+				image_transport::ImageTransport it(nh);
+				image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
 
-			// Sensors State
-	 		ros::Subscriber subRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
-	 		ros::Subscriber subStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
-	 		ros::Subscriber subSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
+				// Image Streaming 
+		 		cv::namedWindow("EtatCapteurs");
+				cv::startWindowThread();
+				image_Capteur = cv::imread("Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
+				
+				// Sensors State
+		 		ros::Subscriber subRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
+		 		ros::Subscriber subStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
+		 		ros::Subscriber subSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
+				ros::Subscriber subCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
+			///////// VARIABLES ////////
+				int handle_A[NB_AIGUILLAGE+1];
 
-			//Declaration des publishers qui controllent les stops
-			ros::Publisher StopJoint1 = nh.advertise<std_msgs::Float64>("/simulation/StopController1", 1);
-			ros::Publisher StopJoint2 = nh.advertise<std_msgs::Float64>("/simulation/StopController2", 1);
-			ros::Publisher StopJoint3 = nh.advertise<std_msgs::Float64>("/simulation/StopController3", 1);
-			ros::Publisher StopJoint4 = nh.advertise<std_msgs::Float64>("/simulation/StopController4", 1);
-			ros::Publisher StopJoint5 = nh.advertise<std_msgs::Float64>("/simulation/StopController5", 1);
-			ros::Publisher StopJoint6 = nh.advertise<std_msgs::Float64>("/simulation/StopController6", 1);
-			ros::Publisher StopJoint7 = nh.advertise<std_msgs::Float64>("/simulation/StopController7", 1);
-			ros::Publisher StopJoint8 = nh.advertise<std_msgs::Float64>("/simulation/StopController8", 1);
-			ros::Publisher StopJoint9 = nh.advertise<std_msgs::Float64>("/simulation/StopController9", 1);
-			ros::Publisher StopJoint10 = nh.advertise<std_msgs::Float64>("/simulation/StopController10", 1);
-			ros::Publisher StopJoint11 = nh.advertise<std_msgs::Float64>("/simulation/StopController11", 1);
-			ros::Publisher StopJoint12 = nh.advertise<std_msgs::Float64>("/simulation/StopController12", 1);
-			ros::Publisher StopJoint13 = nh.advertise<std_msgs::Float64>("/simulation/StopController13", 1);
-			ros::Publisher StopJoint14 = nh.advertise<std_msgs::Float64>("/simulation/StopController14", 1);
-			ros::Publisher StopJoint15 = nh.advertise<std_msgs::Float64>("/simulation/StopController15", 1);
-			ros::Publisher StopJoint16 = nh.advertise<std_msgs::Float64>("/simulation/StopController16", 1);
-			ros::Publisher StopJoint17 = nh.advertise<std_msgs::Float64>("/simulation/StopController17", 1);
-			ros::Publisher StopJoint18 = nh.advertise<std_msgs::Float64>("/simulation/StopController18", 1);
-			ros::Publisher StopJoint19 = nh.advertise<std_msgs::Float64>("/simulation/StopController19", 1);
-			ros::Publisher StopJoint20 = nh.advertise<std_msgs::Float64>("/simulation/StopController20", 1);
-			ros::Publisher StopJoint21 = nh.advertise<std_msgs::Float64>("/simulation/StopController21", 1);
-			ros::Publisher StopJoint22 = nh.advertise<std_msgs::Float64>("/simulation/StopController22", 1);
-			ros::Publisher StopJoint23 = nh.advertise<std_msgs::Float64>("/simulation/StopController23", 1);
-			ros::Publisher StopJoint24 = nh.advertise<std_msgs::Float64>("/simulation/StopController24", 1);
+			////////// VREP HANDLE  ///////
+				ros::ServiceClient client_getObjectHandle=nh.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
+				vrep_common::simRosGetObjectHandle srv_getObjectHandle;
+				
+				for(int i=1;i<=12;i++)
+				{
+					std::ostringstream i_string;
+    					i_string << i;
+					std::string ObjectName_i;
+					ObjectName_i = "A" + i_string.str();
 
-		///////// VARIABLES ////////
-			int handle_A[NB_AIGUILLAGE+1];
+					srv_getObjectHandle.request.objectName=ObjectName_i;
+					if ( client_getObjectHandle.call(srv_getObjectHandle))
+					    handle_A[i] = srv_getObjectHandle.response.handle;
+				}
+				  
+			////////// VREP SERVICES  ///////
+				ros::ServiceClient client_simRosSetJointTargetPosition = 			nh.serviceClient<vrep_common::simRosSetJointTargetPosition>("/vrep/simRosSetJointTargetPosition");
 
-		////////// VREP HANDLE  ///////
-			ros::ServiceClient client_getObjectHandle=nh.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
-			vrep_common::simRosGetObjectHandle srv_getObjectHandle;
-			
-			for(int i=1;i<=12;i++)
-			{
-				std::ostringstream inti;
-				inti << i;
-				std::string s;
-				s = "A" + inti.str();
-
-				srv_getObjectHandle.request.objectName=s;
-				if ( client_getObjectHandle.call(srv_getObjectHandle))
-				    handle_A[i] = srv_getObjectHandle.response.handle;
-			}
-			  
-		////////// VREP SERVICES  ///////
-			ros::ServiceClient client_simRosSetJointTargetPosition = 			nh.serviceClient<vrep_common::simRosSetJointTargetPosition>("/vrep/simRosSetJointTargetPosition");
-			float a = 1;
 			while (ros::ok())
 			{
 				ros::spinOnce();
 				//CELLULE DROITE
 				
 				if (PS09 == 1 && D08D == 1)
-				{
+				{	
 					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[6],120);
 					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[4],120);
 					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[5],-120);
@@ -275,46 +278,9 @@ int main(int argc, char **argv)
 				}
 
 			}				
-				
-			    	/*std_msgs::Float64 msg;
-				a=-a;
-				msg.data = 0.015*a;
-				ROS_INFO("changement!!!	%f",a);
-				sleep(5);
-
-			    	StopJoint1.publish(msg);
-			    	StopJoint2.publish(msg);
-			    	StopJoint3.publish(msg);
-			    	StopJoint4.publish(msg);
-			    	StopJoint5.publish(msg);
-			    	StopJoint6.publish(msg);
-			    	StopJoint7.publish(msg);
-			    	StopJoint8.publish(msg);
-			    	StopJoint9.publish(msg);
-			    	StopJoint10.publish(msg);
-			    	StopJoint11.publish(msg);
-			    	StopJoint12.publish(msg);
-			    	StopJoint13.publish(msg);
-			    	StopJoint14.publish(msg);
-			    	StopJoint15.publish(msg);
-			    	StopJoint16.publish(msg);
-			    	StopJoint17.publish(msg);
-			    	StopJoint18.publish(msg);
-			    	StopJoint19.publish(msg);
-			    	StopJoint20.publish(msg);
-			    	StopJoint21.publish(msg);
-			    	StopJoint22.publish(msg);
-			    	StopJoint23.publish(msg);
-			    	StopJoint24.publish(msg);
-				*/	
 
 			cv::destroyWindow("view");
-			//system("pkill vrep");
+			system("pkill vrep");
 			return 0;
 		} 
 }
-
-
-
-
-
