@@ -200,6 +200,8 @@ int main(int argc, char **argv)
 				ros::Subscriber subCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
 			///////// VARIABLES ////////
 				int handle_A[NB_AIGUILLAGE+1];
+				bool put=true;
+				std_msgs::Int32 JointNumber;
 
 			////////// VREP HANDLE  ///////
 				ros::ServiceClient client_getObjectHandle=nh.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
@@ -275,6 +277,15 @@ int main(int argc, char **argv)
 				{
 					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[10],0);
 					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[3],0);
+				}
+
+			// test on stop control
+				if ((PS05==1)&&(pub==true)){
+					JointNumber.data = 7;
+					StopController.publish(JointNumber);	
+					pub=false;
+					sleep(2);
+					StopController.publish(JointNumber);		
 				}
 
 			}				
