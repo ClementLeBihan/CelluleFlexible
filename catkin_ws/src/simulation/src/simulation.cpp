@@ -198,9 +198,13 @@ int main(int argc, char **argv)
 		 		ros::Subscriber subStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
 		 		ros::Subscriber subSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
 				ros::Subscriber subCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
+
+			///////// PUBLISHERS ////////
+				ros::Publisher StopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
+
 			///////// VARIABLES ////////
 				int handle_A[NB_AIGUILLAGE+1];
-				bool put=true;
+				bool pub=true;
 				std_msgs::Int32 JointNumber;
 
 			////////// VREP HANDLE  ///////
