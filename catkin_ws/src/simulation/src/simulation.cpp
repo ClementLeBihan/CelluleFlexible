@@ -38,6 +38,9 @@ cv::Mat image_Capteur;
 
 int PS01,PS02,PS03,PS04,PS05,PS06,PS07,PS08,PS09,PS10,PS11,PS12,PS13,PS14,PS15,PS16;
 int CP01,CP02,CP03,CP04,CP05,CP06,CP07,CP08,CP09,CP10;
+int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
+int handle_A[NB_AIGUILLAGE+1];
+std_msgs::Int32 sensorRail;
 
 // Fonction qui stocke dans capteur 1 la valeur du capteur (0 ou 1)
 void CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
@@ -114,6 +117,7 @@ void CapteurCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 	D12G = (msg->data & (int32_t)pow(2,23)) > 0;
 }
 
+
 void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
     cv::imshow("Simulation", cv_bridge::toCvShare(msg, "bgr8")->image);
@@ -161,6 +165,84 @@ void SetSwitchPosition(ros::ServiceClient client_simRosSetJointTargetPosition, i
 		client_simRosSetJointTargetPosition.call(srv_SetJointTargetPosition);
 }
 
+void turnSwitch(ros::ServiceClient client_SetJointTargetPosition)
+{
+	int sensorStateLeft, sensorStateRight ; 
+	int angle ; 
+	switch (numSwitch)
+	{
+         case 1:
+           	sensorStateLeft  = D01G ;
+		sensorStateRight  = D01D ;
+            break;
+         case 2:
+            	sensorStateLeft  = D02G ;
+		sensorStateRight  = D02D ;
+            break;
+	 case 3:
+           	sensorStateLeft  = D03G ;
+		sensorStateRight  = D03D ;
+            break;
+         case 4:
+            	sensorStateLeft  = D04G ;
+		sensorStateRight  = D04D ;
+            break;
+	 case 5:
+            	sensorStateLeft  = D05G ;
+		sensorStateRight  = D05D ;
+            break;
+         case 6:
+            	sensorStateLeft  = D06G ;
+		sensorStateRight  = D06D ;
+            break;
+	 case 7:
+            	sensorStateLeft  = D07G ;
+		sensorStateRight  = D07D ;
+            break;
+         case 8:
+            	sensorStateLeft  = D08G ;
+		sensorStateRight  = D08D ;
+            break;
+	 case 9:
+            	sensorStateLeft  = D09G ;
+		sensorStateRight  = D09D ;
+            break;
+         case 10:
+            	sensorStateLeft  = D10G ;
+		sensorStateRight  = D10D ;
+            break;
+	 case 11:
+            	sensorStateLeft  = D11G ;
+		sensorStateRight  = D11D ;
+            break;
+         case 12:
+            	sensorStateLeft  = D12G ;
+		sensorStateRight  = D12D ;
+            break;
+         default:;
+      	}
+	if (direction == 0 && sensorStateRight == 0) //droite
+		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],0);		
+	else if (numSwitch%2 == 1  && sensorStateLeft == 0) //gauche - aiguillage impair
+	{
+		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],-120);	
+	}
+	else if (numSwitch%2 == 0 && sensorStateLeft == 0) //droite - aiguillage pair
+	{
+		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],120);	
+	}
+}
+
+
+void StateSwitchCallBack(const std_msgs::String::ConstPtr&  msg)
+{
+	string result = msg->data.c_str();
+	std::size_t found = result.find(" ");
+	numSwitch = atoi(result.substr(0,found).c_str()) ; 
+	direction = atoi(result.substr(found+1).c_str());
+}
+
+
 int main(int argc, char **argv)
 {
     pid_t pid;
@@ -198,12 +280,15 @@ int main(int argc, char **argv)
 		 		ros::Subscriber subStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
 		 		ros::Subscriber subSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
 				ros::Subscriber subCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
+				ros::Subscriber subSwitchState = nh.subscribe("tp_etudiant/switchState", 1, StateSwitchCallBack);
+
 
 			///////// PUBLISHERS ////////
 				ros::Publisher StopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
+				ros::Publisher railSensorState = nh.advertise<std_msgs::Int32>("/simulation/RailSensorState", 1);
+				ros::Publisher stationSensorState = nh.advertise<std_msgs::Int32>("/simulation/StationSensorState", 1);
 
 			///////// VARIABLES ////////
-				int handle_A[NB_AIGUILLAGE+1];
 				bool pub=true;
 				std_msgs::Int32 JointNumber;
 
@@ -224,68 +309,24 @@ int main(int argc, char **argv)
 				}
 				  
 			////////// VREP SERVICES  ///////
-				ros::ServiceClient client_simRosSetJointTargetPosition = 			nh.serviceClient<vrep_common::simRosSetJointTargetPosition>("/vrep/simRosSetJointTargetPosition");
+				ros::ServiceClient client_simRosSetJointTargetPosition = nh.serviceClient<vrep_common::simRosSetJointTargetPosition>("/vrep/simRosSetJointTargetPosition");
 
 			while (ros::ok())
 			{
 				ros::spinOnce();
 				//CELLULE DROITE
 				
-				if (PS09 == 1 && D08D == 1)
-				{	
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[6],120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[4],120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[5],-120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[9],-120);
-				}
-				if (PS12 == 1 && D08D == 1)
+				railSensorState.publish(sensorRail);
+				if (oldNumSwitch != numSwitch || oldDirection != direction)
 				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[8],120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[7],-120);
-				}
-				if (PS12 == 1 && D08G == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[8],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[5],0);
-				}
-				if (PS10 == 1 && D08G == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[4],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[9],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[6],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[7],0);
-				}
-
-				//CELLULE GAUCHE
-				if (PS13 == 1 && D11D == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[11],-120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[12],120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[1],-120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[2],120);
-				}
-				if (PS14 == 1 && D10D == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[10],120);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[3],-120);
-				}
-				if (PS04 == 1 && D02G == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[11],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[12],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[1],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[2],0);
-				}
-
-				if (PS14 == 1 && D10G == 1)
-				{
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[10],0);
-					SetSwitchPosition(client_simRosSetJointTargetPosition,handle_A[3],0);
+					turnSwitch(client_simRosSetJointTargetPosition);
+					oldNumSwitch = numSwitch ; 
+					oldDirection = direction ; 
 				}
 
 			// test on stop control
 				if ((PS05==1)&&(pub==true)){
-					JointNumber.data = 7;
+					JointNumber.data = pow(2,7);
 					StopController.publish(JointNumber);	
 					pub=false;
 					sleep(2);
