@@ -39,7 +39,7 @@ using namespace std;
 
 cv::Mat image_Capteur;
 
-int PS[17],CPI[9],CP[11];
+int PS[17],CPI[9],CP[11],DD[13],DG[13];
 
 int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
 int handle_A[NB_AIGUILLAGE+1];
@@ -56,14 +56,10 @@ void CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 
 }
 
-
-
 void CapteurCallbackStation(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=8;i++) CPI[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
 }
-
-int DD[13],DG[13];
 
 void CapteurCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 {
@@ -127,49 +123,30 @@ void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 
 	if(DD[1]) line(image_Capteur, cv::Point(14, 113), cv::Point(14, 137), cv::Scalar(0,100,0), 3); //A01
 	if(DG[1]) ellipse(image_Capteur, cv::Point(37, 220),cv::Size(23,23),0,92,163,cv::Scalar(0,100,0), 3);
-
 	if(DD[2]) ellipse(image_Capteur, cv::Point(290, 268),cv::Size(23,23),0,183,255,cv::Scalar(0,100,0), 3);//A02
 	if(DG[2]) line(image_Capteur, cv::Point(257, 245), cv::Point(283, 245), cv::Scalar(0,100,0), 3);
-
 	if(DD[3]) line(image_Capteur, cv::Point(366, 243), cv::Point(390, 243), cv::Scalar(0,100,0), 3); //A03
 	if(DG[3]) ellipse(image_Capteur, cv::Point(358, 221),cv::Size(23,23),0,73,1,cv::Scalar(0,100,0), 3);
-
 	if(DD[4]) line(image_Capteur, cv::Point(629, 243), cv::Point(654, 243), cv::Scalar(0,100,0), 3); //A04
 	if(DG[4]) ellipse(image_Capteur, cv::Point(665, 220),cv::Size(23,23),0,113,181,cv::Scalar(0,100,0), 3);
-
 	if(DD[5]) ellipse(image_Capteur, cv::Point(732, 265),cv::Size(23,23),0,284,363,cv::Scalar(0,100,0), 3);
 	if(DG[5]) line(image_Capteur, cv::Point(738, 245), cv::Point(764, 245), cv::Scalar(0,100,0), 3); //A05
-
 	if(DD[6]) line(image_Capteur, cv::Point(1008, 226), cv::Point(1008, 252), cv::Scalar(0,100,0), 3); //A06
 	if(DG[6]) ellipse(image_Capteur, cv::Point(985, 221),cv::Size(23,23),0,83,12,cv::Scalar(0,100,0), 3);
-
 	if(DD[7]) line(image_Capteur, cv::Point(1008, 114), cv::Point(1008, 138), cv::Scalar(0,100,0), 3); //A07
 	if(DG[7]) ellipse(image_Capteur, cv::Point(985, 145),cv::Size(23,23),0,271,348,cv::Scalar(0,100,0), 3);
-
 	if(DD[8]) ellipse(image_Capteur, cv::Point(733, 96),cv::Size(23,23),0,75,3,cv::Scalar(0,100,0), 3);//A08
 	if(DG[8]) line(image_Capteur, cv::Point(740, 121), cv::Point(764, 121), cv::Scalar(0,100,0), 3); 
-
 	if(DD[9]) line(image_Capteur, cv::Point(631, 121), cv::Point(659, 121), cv::Scalar(0,100,0), 3); //A09
 	if(DG[9]) ellipse(image_Capteur, cv::Point(665, 143),cv::Size(23,23),0,184,256,cv::Scalar(0,100,0), 3);
-
 	if(DD[10]) line(image_Capteur, cv::Point(364, 122), cv::Point(390, 122), cv::Scalar(0,100,0), 3); //A10
 	if(DG[10]) ellipse(image_Capteur, cv::Point(358, 144),cv::Size(23,23),0,282,357,cv::Scalar(0,100,0), 3);
-
 	if(DD[11]) ellipse(image_Capteur, cv::Point(290, 98),cv::Size(23,23),0,110,183,cv::Scalar(0,100,0), 3); //A11
 	if(DG[11]) line(image_Capteur, cv::Point(257, 121), cv::Point(281, 121), cv::Scalar(0,100,0), 3);
-
 	if(DD[12]) line(image_Capteur, cv::Point(14, 228), cv::Point(14, 253), cv::Scalar(0,100,0), 3); //A12
 	if(DG[12]) ellipse(image_Capteur, cv::Point(38, 145),cv::Size(23,23),0,194,268,cv::Scalar(0,100,0), 3);
 
     cv::imshow("EtatCapteurs", image_Capteur);
-}
-
-void SetSwitchPosition(ros::ServiceClient client_simRosSetJointTargetPosition, int handle, double angle)
-{
-		static vrep_common::simRosSetJointTargetPosition srv_SetJointTargetPosition;
-		srv_SetJointTargetPosition.request.handle = handle;		
-		srv_SetJointTargetPosition.request.targetPosition = angle*M_PI/180;			
-		client_simRosSetJointTargetPosition.call(srv_SetJointTargetPosition);
 }
 
 void LoadModel(ros::ServiceClient client_simRosLoadModel, std::string model_name)
@@ -178,25 +155,6 @@ void LoadModel(ros::ServiceClient client_simRosLoadModel, std::string model_name
 	srv_LoadModel.request.fileName = model_name;			
 	client_simRosLoadModel.call(srv_LoadModel);
 }
-
-
-void turnSwitch(ros::ServiceClient client_SetJointTargetPosition)
-{
-	int sensorStateLeft = DG[numSwitch], sensorStateRight = DD[numSwitch] ; 
-	int angle ; 
-
-	if (direction == 0 && sensorStateRight == 0) //droite
-		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],0);		
-	else if (numSwitch%2 == 1  && sensorStateLeft == 0) //gauche - aiguillage impair
-	{
-		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],-120);	
-	}
-	else if (numSwitch%2 == 0 && sensorStateLeft == 0) //droite - aiguillage pair
-	{
-		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],120);	
-	}
-}
-
 
 void StateSwitchCallBack(const std_msgs::String::ConstPtr&  msg)
 {
@@ -220,13 +178,14 @@ int main(int argc, char **argv)
 			ros::NodeHandle nh2;
 
 			ros::ServiceClient client_simRosLoadModel = nh2.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");	
-				
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleA.ttm");
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleB.ttm");
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleC.ttm");
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleD.ttm");
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleE.ttm");
-			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleF.ttm");
+			
+				for(int i=1;i<=argc-1;i++) {
+					if(argv[i][0]>54 || argv[i][0]<49) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 1 ET 6 \n");
+					else {				
+					argv[i][0] = char(argv[i][0]+16);
+					std::string shuttleName = "/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttle"+std::string(argv[i])+".ttm";
+					LoadModel(client_simRosLoadModel,shuttleName); }
+				}
 
 			//Demarrage de la simulation
 				system("rosservice call /vrep/simRosStartSimulation");
@@ -267,6 +226,7 @@ int main(int argc, char **argv)
 				ros::Publisher StopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
 				ros::Publisher railSensorState = nh.advertise<std_msgs::Int32>("/simulation/RailSensorState", 1);
 				ros::Publisher stationSensorState = nh.advertise<std_msgs::Int32>("/simulation/StationSensorState", 1);
+				ros::Publisher SwitchController = nh.advertise<std_msgs::Int32>("/simulation/SwitchController", 1);
 
 			///////// VARIABLES ////////
 				bool pub=true;
@@ -294,25 +254,7 @@ int main(int argc, char **argv)
 			while (ros::ok())
 			{
 				ros::spinOnce();
-				//CELLULE DROITE
 				
-				railSensorState.publish(sensorRail);
-				if (oldNumSwitch != numSwitch || oldDirection != direction)
-				{
-					turnSwitch(client_simRosSetJointTargetPosition);
-					oldNumSwitch = numSwitch ; 
-					oldDirection = direction ; 
-				}
-
-			// test on stop control
-				if ((PS[5]==1)&&(pub==true)){
-					JointNumber.data = pow(2,7);
-					StopController.publish(JointNumber);	
-					pub=false;
-					sleep(2);
-					StopController.publish(JointNumber);		
-				}
-
 			}				
 
 			cv::destroyWindow("view");
