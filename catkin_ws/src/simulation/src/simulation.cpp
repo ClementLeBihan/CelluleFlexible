@@ -39,8 +39,8 @@ using namespace std;
 #define NB_AIGUILLAGE 12
 
 cv::Mat imageCapteur = cv::imread("Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
-cv::Mat imageSimu = cv::Mat::zeros(256, 1024, CV_8UC3 );
-cv::Mat imageTot = cv::Mat::zeros(800, 1180, CV_8UC3 );
+cv::Mat imageSimu = cv::Mat::zeros(512, 1024, CV_8UC3 );
+cv::Mat imageTot = cv::Mat::zeros(960, 1180, CV_8UC3 );
 cv::Mat playButton = cv::imread("PlayButton.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat pauseButton = cv::imread("PauseButton.png",CV_LOAD_IMAGE_COLOR);
 
@@ -55,8 +55,8 @@ static int n_shuttle=0;
 
 void updateUI()
 {
-	imageSimu.copyTo(imageTot.rowRange(100,356).colRange(78,1102));
-	imageCapteur.copyTo(imageTot.rowRange(400,766).colRange(78,1102));
+	imageSimu.copyTo(imageTot.rowRange(70,582).colRange(78,1102));
+	imageCapteur.copyTo(imageTot.rowRange(590,956).colRange(78,1102));
     cv::imshow("Simulation", imageTot);
 }
 
@@ -230,13 +230,14 @@ int main(int argc, char **argv)
 			ros::NodeHandle nh;
 
 			imageTot.setTo(cv::Scalar(200,200,200));
-			playButton.copyTo(imageTot.rowRange(25,82).colRange(364,537));
-			pauseButton.copyTo(imageTot.rowRange(25,82).colRange(564,737));
+			playButton.copyTo(imageTot.rowRange(10,67).colRange(364,537));
+			pauseButton.copyTo(imageTot.rowRange(10,67).colRange(564,737));
 			///////// SUBSCRIBERS ////////
 
 				// Image Streaming 
 		 		cv::namedWindow("Simulation");
 				cv::startWindowThread();
+				cv::moveWindow("Simulation",0,0);
 				cv::setMouseCallback("Simulation", onMouse,0);
 				image_transport::ImageTransport it(nh);
 				image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
