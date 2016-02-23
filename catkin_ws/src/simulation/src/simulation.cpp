@@ -21,6 +21,9 @@ using namespace std;
 #include "vrep_common/VrepInfo.h"
 #include "vrep_common/simRosGetObjectHandle.h"
 #include "vrep_common/simRosSetJointTargetPosition.h"
+#include "vrep_common/simRosLoadModel.h"
+#include "vrep_common/simRosPauseSimulation.h"
+#include "vrep_common/simRosStartSimulation.h"
 #include "std_msgs/String.h"
 
 // Used API services:
@@ -36,85 +39,38 @@ using namespace std;
 
 cv::Mat image_Capteur;
 
-int PS01,PS02,PS03,PS04,PS05,PS06,PS07,PS08,PS09,PS10,PS11,PS12,PS13,PS14,PS15,PS16;
-int CP01,CP02,CP03,CP04,CP05,CP06,CP07,CP08,CP09,CP10;
+int PS[17],CPI[9],CP[11];
+
 int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
 int handle_A[NB_AIGUILLAGE+1];
 std_msgs::Int32 sensorRail;
 
+int handle_Shuttle[7];
+static int n_shuttle=0;
+
 // Fonction qui stocke dans capteur 1 la valeur du capteur (0 ou 1)
 void CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
-	PS01 = (msg->data & (int32_t)pow(2,0)) > 0;
-	PS02 = (msg->data & (int32_t)pow(2,1)) > 0;
-	PS03 = (msg->data & (int32_t)pow(2,2)) > 0;
-	PS04 = (msg->data & (int32_t)pow(2,3)) > 0;
-	PS05 = (msg->data & (int32_t)pow(2,4)) > 0;
-	PS06 = (msg->data & (int32_t)pow(2,5)) > 0;
-	PS07 = (msg->data & (int32_t)pow(2,6)) > 0;
-	PS08 = (msg->data & (int32_t)pow(2,7)) > 0;
-	PS09 = (msg->data & (int32_t)pow(2,8)) > 0;
-	PS10 = (msg->data & (int32_t)pow(2,9)) > 0;
-	PS11 = (msg->data & (int32_t)pow(2,10)) > 0;
-	PS12 = (msg->data & (int32_t)pow(2,11)) > 0;
-	PS13 = (msg->data & (int32_t)pow(2,12)) > 0;
-	PS14 = (msg->data & (int32_t)pow(2,13)) > 0;
-	PS15 = (msg->data & (int32_t)pow(2,14)) > 0;
-	PS16 = (msg->data & (int32_t)pow(2,15)) > 0;
-	CP01 = (msg->data & (int32_t)pow(2,16)) > 0;
-	CP02 = (msg->data & (int32_t)pow(2,17)) > 0;
-	CP03 = (msg->data & (int32_t)pow(2,18)) > 0;
-	CP04 = (msg->data & (int32_t)pow(2,19)) > 0;
-	CP05 = (msg->data & (int32_t)pow(2,20)) > 0;
-	CP06 = (msg->data & (int32_t)pow(2,21)) > 0;
-	CP07 = (msg->data & (int32_t)pow(2,22)) > 0;
-	CP08 = (msg->data & (int32_t)pow(2,23)) > 0;
-	CP09 = (msg->data & (int32_t)pow(2,24)) > 0;
-	CP10 = (msg->data & (int32_t)pow(2,25)) > 0;
+	for(int i=1;i<=16;i++) PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
+	for(int i=1;i<=10;i++) CP[i] = (msg->data & (int32_t)pow(2,15+i)) > 0;
+
 }
 
-int CPI01,CPI02,CPI03,CPI04,CPI05,CPI06,CPI07,CPI08;
+
 
 void CapteurCallbackStation(const std_msgs::Int32::ConstPtr& msg)
 {
-	CPI01 = (msg->data & (int32_t)pow(2,0)) > 0;
-	CPI02 = (msg->data & (int32_t)pow(2,1)) > 0;
-	CPI03 = (msg->data & (int32_t)pow(2,2)) > 0;
-	CPI04 = (msg->data & (int32_t)pow(2,3)) > 0;
-	CPI05 = (msg->data & (int32_t)pow(2,4)) > 0;
-	CPI06 = (msg->data & (int32_t)pow(2,5)) > 0;
-	CPI07 = (msg->data & (int32_t)pow(2,6)) > 0;
-	CPI08 = (msg->data & (int32_t)pow(2,7)) > 0;
+	for(int i=1;i<=8;i++) CPI[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
 }
 
-int D01D,D01G,D02D,D02G,D03D,D03G,D04D,D04G,D05D,D05G,D06D,D06G,D07D,D07G,D08D,D08G,D09D,D09G,D10D,D10G,D11D,D11G,D12D,D12G;
+int DD[13],DG[13];
 
 void CapteurCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 {
-	D01D = (msg->data & (int32_t)pow(2,0)) > 0;
-	D01G = (msg->data & (int32_t)pow(2,1)) > 0;
-	D02D = (msg->data & (int32_t)pow(2,2)) > 0;
-	D02G = (msg->data & (int32_t)pow(2,3)) > 0;
-	D03D = (msg->data & (int32_t)pow(2,4)) > 0;
-	D03G = (msg->data & (int32_t)pow(2,5)) > 0;
-	D04D = (msg->data & (int32_t)pow(2,6)) > 0;
-	D04G = (msg->data & (int32_t)pow(2,7)) > 0;
-	D05D = (msg->data & (int32_t)pow(2,8)) > 0;
-	D05G = (msg->data & (int32_t)pow(2,9)) > 0;
-	D06D = (msg->data & (int32_t)pow(2,10)) > 0;
-	D06G = (msg->data & (int32_t)pow(2,11)) > 0;
-	D07D = (msg->data & (int32_t)pow(2,12)) > 0;
-	D07G = (msg->data & (int32_t)pow(2,13)) > 0;
-	D08D = (msg->data & (int32_t)pow(2,14)) > 0;
-	D08G = (msg->data & (int32_t)pow(2,15)) > 0;
-	D09D = (msg->data & (int32_t)pow(2,16)) > 0;
-	D09G = (msg->data & (int32_t)pow(2,17)) > 0;
-	D10D = (msg->data & (int32_t)pow(2,18)) > 0;
-	D10G = (msg->data & (int32_t)pow(2,19)) > 0;
-	D11D = (msg->data & (int32_t)pow(2,20)) > 0;
-	D11G = (msg->data & (int32_t)pow(2,21)) > 0;
-	D12D = (msg->data & (int32_t)pow(2,22)) > 0;
-	D12G = (msg->data & (int32_t)pow(2,23)) > 0;
+	for(int i=1;i<=12;i++){
+		DD[i] = (msg->data & (int32_t)pow(2,2*i-2)) > 0;
+		DG[i] = (msg->data & (int32_t)pow(2,2*i-1)) > 0;
+	}
 }
 
 
@@ -126,34 +82,85 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	// CP
-	circle(image_Capteur, cv::Point(54, 359), 5, cv::Scalar(0,255*CP01,255-255*CP01), -1, 8 );
-	circle(image_Capteur, cv::Point(95, 237), 5, cv::Scalar(0,255*CP02,255-255*CP02), -1, 8 );
-    	circle(image_Capteur, cv::Point(446, 237), 5, cv::Scalar(0,255*CP03,255-255*CP03), -1, 8 );
-	circle(image_Capteur, cv::Point(785, 348), 5, cv::Scalar(0,255*CP04,255-255*CP04), -1, 8 );
-	circle(image_Capteur, cv::Point(814, 236), 5, cv::Scalar(0,255*CP05,255-255*CP05), -1, 8 );
-	circle(image_Capteur, cv::Point(1005, 24), 5, cv::Scalar(0,255*CP06,255-255*CP06), -1, 8 );
-	circle(image_Capteur, cv::Point(912, 136), 5, cv::Scalar(0,255*CP07,255-255*CP07), -1, 8 );
-	circle(image_Capteur, cv::Point(577, 137), 5, cv::Scalar(0,255*CP08,255-255*CP08), -1, 8 );
-	circle(image_Capteur, cv::Point(242, 27), 5, cv::Scalar(0,255*CP09,255-255*CP09), -1, 8 );
-	circle(image_Capteur, cv::Point(182, 136), 5, cv::Scalar(0,255*CP10,255-255*CP10), -1, 8 );
+	circle(image_Capteur, cv::Point(45, 349), 5, cv::Scalar(0,255*CP[1],255-255*CP[1]), -1, 8 );
+	circle(image_Capteur, cv::Point(122, 231), 5, cv::Scalar(0,255*CP[2],255-255*CP[2]), -1, 8 );
+    	circle(image_Capteur, cv::Point(447, 231), 5, cv::Scalar(0,255*CP[3],255-255*CP[3]), -1, 8 );
+	circle(image_Capteur, cv::Point(788, 348), 5, cv::Scalar(0,255*CP[4],255-255*CP[4]), -1, 8 );
+	circle(image_Capteur, cv::Point(806, 230), 5, cv::Scalar(0,255*CP[5],255-255*CP[5]), -1, 8 );
+	circle(image_Capteur, cv::Point(981, 18), 5, cv::Scalar(0,255*CP[6],255-255*CP[6]), -1, 8 );
+	circle(image_Capteur, cv::Point(878, 135), 5, cv::Scalar(0,255*CP[7],255-255*CP[7]), -1, 8 );
+	circle(image_Capteur, cv::Point(576, 135), 5, cv::Scalar(0,255*CP[8],255-255*CP[8]), -1, 8 );
+	circle(image_Capteur, cv::Point(236, 16), 5, cv::Scalar(0,255*CP[9],255-255*CP[9]), -1, 8 );
+	circle(image_Capteur, cv::Point(190, 135), 5, cv::Scalar(0,255*CP[10],255-255*CP[10]), -1, 8 );
 
 	// PS
-	circle(image_Capteur, cv::Point(15, 191), 5, cv::Scalar(0,255*PS01,255-255*PS01), -1, 8 );
-	circle(image_Capteur, cv::Point(201, 237), 5, cv::Scalar(0,255*PS02,255-255*PS02), -1, 8 );
-	circle(image_Capteur, cv::Point(244, 345), 5, cv::Scalar(0,255*PS03,255-255*PS03), -1, 8 );
-	circle(image_Capteur, cv::Point(331, 237), 5, cv::Scalar(0,255*PS04,255-255*PS04), -1, 8 );
-	circle(image_Capteur, cv::Point(573, 237), 5, cv::Scalar(0,255*PS05,255-255*PS05), -1, 8 );
-	circle(image_Capteur, cv::Point(705, 236), 5, cv::Scalar(0,255*PS06,255-255*PS06), -1, 8 );
-	circle(image_Capteur, cv::Point(944, 238), 5, cv::Scalar(0,255*PS07,255-255*PS07), -1, 8 );
-	circle(image_Capteur, cv::Point(1004, 347), 5, cv::Scalar(0,255*PS08,255-255*PS08), -1, 8 );
-	circle(image_Capteur, cv::Point(1008, 188),5, cv::Scalar(0,255*PS09,255-255*PS09), -1, 8 );
-	circle(image_Capteur, cv::Point(847, 137), 5, cv::Scalar(0,255*PS10,255-255*PS10), -1, 8 );
-	circle(image_Capteur, cv::Point(776, 29), 5, cv::Scalar(0,255*PS11,255-255*PS11), -1, 8 );
-	circle(image_Capteur, cv::Point(706, 136), 5, cv::Scalar(0,255*PS12,255-255*PS12), -1, 8 );
-	circle(image_Capteur, cv::Point(453, 136), 5, cv::Scalar(0,255*PS13,255-255*PS13), -1, 8 );
-	circle(image_Capteur, cv::Point(316, 137), 5, cv::Scalar(0,255*PS14,255-255*PS14), -1, 8 );
-	circle(image_Capteur, cv::Point(75, 137), 5, cv::Scalar(0,255*PS15,255-255*PS15), -1, 8 );
-	circle(image_Capteur, cv::Point(21, 27), 5, cv::Scalar(0,255*PS16,255-255*PS16), -1, 8 );
+	circle(image_Capteur, cv::Point(27, 181), 5, cv::Scalar(0,255*PS[1],255-255*PS[1]), -1, 8 );
+	circle(image_Capteur, cv::Point(241, 230), 5, cv::Scalar(0,255*PS[2],255-255*PS[2]), -1, 8 );
+	circle(image_Capteur, cv::Point(248, 342), 5, cv::Scalar(0,255*PS[3],255-255*PS[3]), -1, 8 );
+	circle(image_Capteur, cv::Point(326, 230), 5, cv::Scalar(0,255*PS[4],255-255*PS[4]), -1, 8 );
+	circle(image_Capteur, cv::Point(572, 231), 5, cv::Scalar(0,255*PS[5],255-255*PS[5]), -1, 8 );
+	circle(image_Capteur, cv::Point(700, 231), 5, cv::Scalar(0,255*PS[6],255-255*PS[6]), -1, 8 );
+	circle(image_Capteur, cv::Point(934, 232), 5, cv::Scalar(0,255*PS[7],255-255*PS[7]), -1, 8 );
+	circle(image_Capteur, cv::Point(992, 339), 5, cv::Scalar(0,255*PS[8],255-255*PS[8]), -1, 8 );
+	circle(image_Capteur, cv::Point(995, 189),5, cv::Scalar(0,255*PS[9],255-255*PS[9]), -1, 8 );
+	circle(image_Capteur, cv::Point(783, 135), 5, cv::Scalar(0,255*PS[10],255-255*PS[10]), -1, 8 );
+	circle(image_Capteur, cv::Point(770, 28), 5, cv::Scalar(0,255*PS[11],255-255*PS[11]), -1, 8 );
+	circle(image_Capteur, cv::Point(701, 136), 5, cv::Scalar(0,255*PS[12],255-255*PS[12]), -1, 8 );
+	circle(image_Capteur, cv::Point(454, 135), 5, cv::Scalar(0,255*PS[13],255-255*PS[13]), -1, 8 );
+	circle(image_Capteur, cv::Point(321, 135), 5, cv::Scalar(0,255*PS[14],255-255*PS[14]), -1, 8 );
+	circle(image_Capteur, cv::Point(66, 135), 5, cv::Scalar(0,255*PS[15],255-255*PS[15]), -1, 8 );
+	circle(image_Capteur, cv::Point(29, 26), 5, cv::Scalar(0,255*PS[16],255-255*PS[16]), -1, 8 );
+
+	// Aiguillages
+	circle(image_Capteur, cv::Point(21, 241), 16, cv::Scalar(255,255,255), -1); //A01
+	circle(image_Capteur, cv::Point(270, 253), 16, cv::Scalar(255,255,255), -1); //A02
+	circle(image_Capteur, cv::Point(378, 235), 16, cv::Scalar(255,255,255), -1); //A03
+	circle(image_Capteur, cv::Point(642, 235), 16, cv::Scalar(255,255,255), -1); //A04
+	circle(image_Capteur, cv::Point(751, 253), 16, cv::Scalar(255,255,255), -1); //A05
+	circle(image_Capteur, cv::Point(1002, 240), 16, cv::Scalar(255,255,255), -1); //A06
+	circle(image_Capteur, cv::Point(1000, 127), 16, cv::Scalar(255,255,255), -1); //A07
+	circle(image_Capteur, cv::Point(752, 112), 16, cv::Scalar(255,255,255), -1); //A08
+	circle(image_Capteur, cv::Point(645, 127), 16, cv::Scalar(255,255,255), -1); //A09
+	circle(image_Capteur, cv::Point(377, 129), 16, cv::Scalar(255,255,255), -1); //A10
+	circle(image_Capteur, cv::Point(269, 113), 16, cv::Scalar(255,255,255), -1); //A11
+	circle(image_Capteur, cv::Point(21, 125), 16, cv::Scalar(255,255,255), -1); //A12
+
+	if(DD[1]) line(image_Capteur, cv::Point(14, 113), cv::Point(14, 137), cv::Scalar(0,100,0), 3); //A01
+	if(DG[1]) ellipse(image_Capteur, cv::Point(37, 220),cv::Size(23,23),0,92,163,cv::Scalar(0,100,0), 3);
+
+	if(DD[2]) ellipse(image_Capteur, cv::Point(290, 268),cv::Size(23,23),0,183,255,cv::Scalar(0,100,0), 3);//A02
+	if(DG[2]) line(image_Capteur, cv::Point(257, 245), cv::Point(283, 245), cv::Scalar(0,100,0), 3);
+
+	if(DD[3]) line(image_Capteur, cv::Point(366, 243), cv::Point(390, 243), cv::Scalar(0,100,0), 3); //A03
+	if(DG[3]) ellipse(image_Capteur, cv::Point(358, 221),cv::Size(23,23),0,73,1,cv::Scalar(0,100,0), 3);
+
+	if(DD[4]) line(image_Capteur, cv::Point(629, 243), cv::Point(654, 243), cv::Scalar(0,100,0), 3); //A04
+	if(DG[4]) ellipse(image_Capteur, cv::Point(665, 220),cv::Size(23,23),0,113,181,cv::Scalar(0,100,0), 3);
+
+	if(DD[5]) ellipse(image_Capteur, cv::Point(732, 265),cv::Size(23,23),0,284,363,cv::Scalar(0,100,0), 3);
+	if(DG[5]) line(image_Capteur, cv::Point(738, 245), cv::Point(764, 245), cv::Scalar(0,100,0), 3); //A05
+
+	if(DD[6]) line(image_Capteur, cv::Point(1008, 226), cv::Point(1008, 252), cv::Scalar(0,100,0), 3); //A06
+	if(DG[6]) ellipse(image_Capteur, cv::Point(985, 221),cv::Size(23,23),0,83,12,cv::Scalar(0,100,0), 3);
+
+	if(DD[7]) line(image_Capteur, cv::Point(1008, 114), cv::Point(1008, 138), cv::Scalar(0,100,0), 3); //A07
+	if(DG[7]) ellipse(image_Capteur, cv::Point(985, 145),cv::Size(23,23),0,271,348,cv::Scalar(0,100,0), 3);
+
+	if(DD[8]) ellipse(image_Capteur, cv::Point(733, 96),cv::Size(23,23),0,75,3,cv::Scalar(0,100,0), 3);//A08
+	if(DG[8]) line(image_Capteur, cv::Point(740, 121), cv::Point(764, 121), cv::Scalar(0,100,0), 3); 
+
+	if(DD[9]) line(image_Capteur, cv::Point(631, 121), cv::Point(659, 121), cv::Scalar(0,100,0), 3); //A09
+	if(DG[9]) ellipse(image_Capteur, cv::Point(665, 143),cv::Size(23,23),0,184,256,cv::Scalar(0,100,0), 3);
+
+	if(DD[10]) line(image_Capteur, cv::Point(364, 122), cv::Point(390, 122), cv::Scalar(0,100,0), 3); //A10
+	if(DG[10]) ellipse(image_Capteur, cv::Point(358, 144),cv::Size(23,23),0,282,357,cv::Scalar(0,100,0), 3);
+
+	if(DD[11]) ellipse(image_Capteur, cv::Point(290, 98),cv::Size(23,23),0,110,183,cv::Scalar(0,100,0), 3); //A11
+	if(DG[11]) line(image_Capteur, cv::Point(257, 121), cv::Point(281, 121), cv::Scalar(0,100,0), 3);
+
+	if(DD[12]) line(image_Capteur, cv::Point(14, 228), cv::Point(14, 253), cv::Scalar(0,100,0), 3); //A12
+	if(DG[12]) ellipse(image_Capteur, cv::Point(38, 145),cv::Size(23,23),0,194,268,cv::Scalar(0,100,0), 3);
+
     cv::imshow("EtatCapteurs", image_Capteur);
 }
 
@@ -165,62 +172,19 @@ void SetSwitchPosition(ros::ServiceClient client_simRosSetJointTargetPosition, i
 		client_simRosSetJointTargetPosition.call(srv_SetJointTargetPosition);
 }
 
+void LoadModel(ros::ServiceClient client_simRosLoadModel, std::string model_name)
+{
+	static vrep_common::simRosLoadModel srv_LoadModel;
+	srv_LoadModel.request.fileName = model_name;			
+	client_simRosLoadModel.call(srv_LoadModel);
+}
+
+
 void turnSwitch(ros::ServiceClient client_SetJointTargetPosition)
 {
-	int sensorStateLeft, sensorStateRight ; 
+	int sensorStateLeft = DG[numSwitch], sensorStateRight = DD[numSwitch] ; 
 	int angle ; 
-	switch (numSwitch)
-	{
-         case 1:
-           	sensorStateLeft  = D01G ;
-		sensorStateRight  = D01D ;
-            break;
-         case 2:
-            	sensorStateLeft  = D02G ;
-		sensorStateRight  = D02D ;
-            break;
-	 case 3:
-           	sensorStateLeft  = D03G ;
-		sensorStateRight  = D03D ;
-            break;
-         case 4:
-            	sensorStateLeft  = D04G ;
-		sensorStateRight  = D04D ;
-            break;
-	 case 5:
-            	sensorStateLeft  = D05G ;
-		sensorStateRight  = D05D ;
-            break;
-         case 6:
-            	sensorStateLeft  = D06G ;
-		sensorStateRight  = D06D ;
-            break;
-	 case 7:
-            	sensorStateLeft  = D07G ;
-		sensorStateRight  = D07D ;
-            break;
-         case 8:
-            	sensorStateLeft  = D08G ;
-		sensorStateRight  = D08D ;
-            break;
-	 case 9:
-            	sensorStateLeft  = D09G ;
-		sensorStateRight  = D09D ;
-            break;
-         case 10:
-            	sensorStateLeft  = D10G ;
-		sensorStateRight  = D10D ;
-            break;
-	 case 11:
-            	sensorStateLeft  = D11G ;
-		sensorStateRight  = D11D ;
-            break;
-         case 12:
-            	sensorStateLeft  = D12G ;
-		sensorStateRight  = D12D ;
-            break;
-         default:;
-      	}
+
 	if (direction == 0 && sensorStateRight == 0) //droite
 		SetSwitchPosition(client_SetJointTargetPosition,handle_A[numSwitch],0);		
 	else if (numSwitch%2 == 1  && sensorStateLeft == 0) //gauche - aiguillage impair
@@ -242,7 +206,6 @@ void StateSwitchCallBack(const std_msgs::String::ConstPtr&  msg)
 	direction = atoi(result.substr(found+1).c_str());
 }
 
-
 int main(int argc, char **argv)
 {
     pid_t pid;
@@ -251,7 +214,24 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     else if (pid == 0) 
 		{
-          		system("~/Projet_Long/V-Rep/vrep.sh -h -sXXX -q ~/Projet_Long/Simulation.ttt");
+      		system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
+		  	sleep(2);
+			ros::init(argc, argv, "simulation2");
+			ros::NodeHandle nh2;
+
+			ros::ServiceClient client_simRosLoadModel = nh2.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");	
+				
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleA.ttm");
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleB.ttm");
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleC.ttm");
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleD.ttm");
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleE.ttm");
+			LoadModel(client_simRosLoadModel,"/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttleF.ttm");
+
+			//Demarrage de la simulation
+				system("rosservice call /vrep/simRosStartSimulation");
+				ROS_INFO("Reprise de la  simulation");
+
 		}
     else if (pid > 0) 
 		{
@@ -325,7 +305,7 @@ int main(int argc, char **argv)
 				}
 
 			// test on stop control
-				if ((PS05==1)&&(pub==true)){
+				if ((PS[5]==1)&&(pub==true)){
 					JointNumber.data = pow(2,7);
 					StopController.publish(JointNumber);	
 					pub=false;
