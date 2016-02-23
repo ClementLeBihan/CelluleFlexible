@@ -214,12 +214,14 @@ int main(int argc, char **argv)
 				// Image Streaming 
 		 		cv::namedWindow("Simulation");
 				cv::startWindowThread();
+				cv::moveWindow("Simulation",0,0);
 				image_transport::ImageTransport it(nh);
 				image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
 
 				// Image Streaming 
 		 		cv::namedWindow("EtatCapteurs");
 				cv::startWindowThread();
+				cv::moveWindow("EtatCapteurs",0,300);
 				image_Capteur = cv::imread("Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
 				
 				// Sensors State
