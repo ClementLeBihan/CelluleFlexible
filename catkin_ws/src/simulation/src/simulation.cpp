@@ -43,7 +43,7 @@ int PS[17],CPI[9],CP[11],DD[13],DG[13];
 
 int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
 int handle_A[NB_AIGUILLAGE+1];
-std_msgs::Int32 sensorRail;
+std_msgs::Int32 sensorRail, sensorStation,StopNumber;
 
 int handle_Shuttle[7];
 static int n_shuttle=0;
@@ -53,12 +53,14 @@ void CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=16;i++) PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
 	for(int i=1;i<=10;i++) CP[i] = (msg->data & (int32_t)pow(2,15+i)) > 0;
+	sensorRail.data = msg->data ; 
 
 }
 
 void CapteurCallbackStation(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=8;i++) CPI[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
+	sensorStation.data = msg->data ; 
 }
 
 void CapteurCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
@@ -164,6 +166,11 @@ void StateSwitchCallBack(const std_msgs::String::ConstPtr&  msg)
 	direction = atoi(result.substr(found+1).c_str());
 }
 
+void StateStopCallBack(const std_msgs::Int32::ConstPtr&  msg)
+{
+	StopNumber.data = msg->data;
+}
+
 int main(int argc, char **argv)
 {
     pid_t pid;
@@ -180,8 +187,9 @@ int main(int argc, char **argv)
 			ros::ServiceClient client_simRosLoadModel = nh2.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");	
 			
 				for(int i=1;i<=argc-1;i++) {
-					if(argv[i][0]>54 || argv[i][0]<49) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 1 ET 6 \n");
-					else {				
+					if(argv[i][0]>54 || argv[i][0]<48) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 0 ET 6 \n");
+					else {		
+					if(argv[i][0] == 48) argv[i][0] = char(74);
 					argv[i][0] = char(argv[i][0]+16);
 					std::string shuttleName = "/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttle"+std::string(argv[i])+".ttm";
 					LoadModel(client_simRosLoadModel,shuttleName); }
@@ -253,8 +261,14 @@ int main(int argc, char **argv)
 
 			while (ros::ok())
 			{
-				ros::spinOnce();
+				ros::spinOnce();				
+				railSensorState.publish(sensorRail);
+				stationSensorState.publish(sensorStation);
+
+				//Pour modifier la position d'un aiguillage, il suffit de faire SwitchController.publish(SwitchNumber) en stockant dans SwitchNumber.data la somme des puissances de 2 des numéros d'aiguillages-1 (pour tourner aiguillage 2 et 3, on fait SwitchNumber.data = pow(2,2-1) + pow(2,3-1)
 				
+				//Pour modifier la position d'un stop, faire pareil mais avec StopController.publish(StopNumber)
+
 			}				
 
 			cv::destroyWindow("view");

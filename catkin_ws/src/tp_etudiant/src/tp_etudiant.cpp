@@ -19,7 +19,8 @@
 int PS01,PS02,PS03,PS04,PS05,PS06,PS07,PS08,PS09,PS10,PS11,PS12,PS13,PS14,PS15,PS16;
 int CP01,CP02,CP03,CP04,CP05,CP06,CP07,CP08,CP09,CP10;
 int CPI01,CPI02,CPI03,CPI04,CPI05,CPI06,CPI07,CPI08;
-int resultStop = 0 ; 
+std_msgs::Int32 resultStop; 
+int stateStop(0) ;
 void CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
 	PS01 = (msg->data & 1) > 0;
@@ -66,9 +67,7 @@ void CapteurCallbackStation(const std_msgs::Int32::ConstPtr& msg)
 
 int ChangeStateStop(int numStop)
 {
-	resultStop = pow(2,numStop-1);
-
-
+	stateStop += pow(2,numStop-1);
 }
 
 
@@ -82,11 +81,29 @@ int main(int argc, char **argv)
 	ros::Subscriber subSensorRailState = nh.subscribe("/simulation/RailSensorState", 1, CapteurCallbackRail);
 	ros::Subscriber subSensorStationState = nh.subscribe("/simulation/StationSensorState", 1, CapteurCallbackStation);
 	
-	
+	int publish = 0 ; 
+	bool pubps05=false;
 	std_msgs::String valueSwitch ; 
 	while (ros::ok())
 	{
-		if (PS05 == 1 && pub == false){
+		if (PS05 == 1){
+			pubps05=true;
+		}
+		if (pubps05 == true){
+			if (PS05 == 0){
+				pubps05=false;	
+				//valueSwitch.data = "10 1";
+
+				ChangeStateStop(1); 
+				ChangeStateStop(2);
+				ChangeStateStop(3);
+
+				resultStop.data = stateStop ; 
+				stopState.publish(resultStop); 	
+				ROS_INFO("publ tp_etudiant");	
+			}		
+		}
+		/*if (PS05 == 1 && pub == false){
 			valueSwitch.data = "10 1"; 
 			pub = true ; 
 		}
@@ -98,7 +115,7 @@ int main(int argc, char **argv)
 		{
 			switchState.publish(valueSwitch);
 			pub = false ; 
-		}
+		}*/
 		ros::spinOnce();
 	}
 
