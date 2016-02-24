@@ -48,7 +48,7 @@ int PS[17],CPI[9],CP[11],DD[13],DG[13];
 
 int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
 int handle_A[NB_AIGUILLAGE+1];
-std_msgs::Int32 sensorRail, sensorStation,StopNumber;
+std_msgs::Int32 sensorRail, sensorStation, StopNumber, SwitchNumber;
 
 int handle_Shuttle[7];
 static int n_shuttle=0;
@@ -189,12 +189,9 @@ void LoadModel(ros::ServiceClient client_simRosLoadModel, std::string model_name
 	client_simRosLoadModel.call(srv_LoadModel);
 }
 
-void StateSwitchCallBack(const std_msgs::String::ConstPtr&  msg)
+void StateSwitchCallBack(const std_msgs::Int32::ConstPtr&  msg)
 {
-	string result = msg->data.c_str();
-	std::size_t found = result.find(" ");
-	numSwitch = atoi(result.substr(0,found).c_str()) ; 
-	direction = atoi(result.substr(found+1).c_str());
+	SwitchNumber.data = msg->data;
 }
 
 void StateStopCallBack(const std_msgs::Int32::ConstPtr&  msg)
@@ -253,53 +250,51 @@ int main(int argc, char **argv)
 				image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
 
 				// Sensors State
-		 		ros::Subscriber subRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
-		 		ros::Subscriber subStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
-		 		ros::Subscriber subSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
-				ros::Subscriber subCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
-				ros::Subscriber subSwitchState = nh.subscribe("tp_etudiant/switchState", 1, StateSwitchCallBack);
+		 		ros::Subscriber VREPsubRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
+		 		ros::Subscriber VREPsubStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
+		 		ros::Subscriber VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
+				ros::Subscriber VREPsubCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
 
 
-			///////// PUBLISHERS ////////
-				ros::Publisher StopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
-				ros::Publisher railSensorState = nh.advertise<std_msgs::Int32>("/simulation/RailSensorState", 1);
-				ros::Publisher stationSensorState = nh.advertise<std_msgs::Int32>("/simulation/StationSensorState", 1);
-				ros::Publisher SwitchController = nh.advertise<std_msgs::Int32>("/simulation/SwitchController", 1);
+			///////// VREP PUBLISHERS ////////
+				ros::Publisher VREPSwitchController = nh.advertise<std_msgs::Int32>("/simulation/SwitchController", 10);
+				ros::Publisher VREPStopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 10);
+				ros::Publisher TPrailSensorState = nh.advertise<std_msgs::Int32>("/simulation/RailSensorState", 1);
+				ros::Publisher TPstationSensorState = nh.advertise<std_msgs::Int32>("/simulation/StationSensorState", 1);
+
+
+			///////// TP_ETUDIANT SUBSCRIBER ////////
+
+				ros::Subscriber TPsubSwitchState = nh.subscribe("tp_etudiant/switchState", 20, StateSwitchCallBack);
+				ros::Subscriber TPsubStopState = nh.subscribe("tp_etudiant/stopState", 20, StateStopCallBack);
+
+
 
 			///////// VARIABLES ////////
-				bool pub=true;
-				std_msgs::Int32 JointNumber;
+				int StopNumberOld(0), SwitchNumberOld(0);
 
-			////////// VREP HANDLE  ///////
-				ros::ServiceClient client_getObjectHandle=nh.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
-				vrep_common::simRosGetObjectHandle srv_getObjectHandle;
-				
-				for(int i=1;i<=12;i++)
-				{
-					std::ostringstream i_string;
-    					i_string << i;
-					std::string ObjectName_i;
-					ObjectName_i = "A" + i_string.str();
-
-					srv_getObjectHandle.request.objectName=ObjectName_i;
-					if ( client_getObjectHandle.call(srv_getObjectHandle))
-					    handle_A[i] = srv_getObjectHandle.response.handle;
-				}
-				  
-			////////// VREP SERVICES  ///////
-				ros::ServiceClient client_simRosSetJointTargetPosition = nh.serviceClient<vrep_common::simRosSetJointTargetPosition>("/vrep/simRosSetJointTargetPosition");
 
 			while (ros::ok())
 			{
 				ros::spinOnce();				
-				railSensorState.publish(sensorRail);
-				stationSensorState.publish(sensorStation);
+				TPrailSensorState.publish(sensorRail);
+				TPstationSensorState.publish(sensorStation);
+		
+				if(StopNumber.data!=StopNumberOld){
+					VREPStopController.publish(StopNumber);
+				}
+				if(SwitchNumber.data!=SwitchNumberOld){
+					VREPSwitchController.publish(SwitchNumber);
+				}
 
-				//Pour modifier la position d'un aiguillage, il suffit de faire SwitchController.publish(SwitchNumber) en stockant dans 				SwitchNumber.data la somme des puissances de 2 des numéros d'aiguillages-1 (pour tourner aiguillage 2 et 3, on fait 				SwitchNumber.data = pow(2,2-1) + pow(2,3-1)
+				//Pour modifier la position d'un aiguillage, il suffit de faire SwitchController.publish(SwitchNumber) en stockant dans SwitchNumber.data la somme des puissances de 2 des numéros d'aiguillages-1 (pour tourner aiguillage 2 et 3, on fait SwitchNumber.data = pow(2,2-1) + pow(2,3-1)
 				
 				//Pour modifier la position d'un stop, faire pareil mais avec StopController.publish(StopNumber)
-
+			
+				StopNumberOld=StopNumber.data;
+				SwitchNumberOld=SwitchNumber.data;
 			}				
+				
 
 			cv::destroyWindow("view");
 			system("pkill vrep");
