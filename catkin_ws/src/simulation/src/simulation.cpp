@@ -112,6 +112,16 @@ void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 	circle(imageCapteur, cv::Point(236, 16), 5, cv::Scalar(0,255*CP[9],255-255*CP[9]), -1, 8 );
 	circle(imageCapteur, cv::Point(190, 135), 5, cv::Scalar(0,255*CP[10],255-255*CP[10]), -1, 8 );
 
+	// CPI
+	circle(imageCapteur, cv::Point(100, 346), 5, cv::Scalar(0,255*CPI[1],255-255*CPI[1]), -1, 8 );
+	circle(imageCapteur, cv::Point(185, 346), 5, cv::Scalar(0,255*CPI[2],255-255*CPI[2]), -1, 8 );
+    	circle(imageCapteur, cv::Point(847, 345), 5, cv::Scalar(0,255*CPI[3],255-255*CPI[3]), -1, 8 );
+	circle(imageCapteur, cv::Point(931, 345), 5, cv::Scalar(0,255*CPI[4],255-255*CPI[4]), -1, 8 );
+	circle(imageCapteur, cv::Point(925, 21), 5, cv::Scalar(0,255*CPI[5],255-255*CPI[5]), -1, 8 );
+	circle(imageCapteur, cv::Point(841, 22), 5, cv::Scalar(0,255*CPI[6],255-255*CPI[6]), -1, 8 );
+	circle(imageCapteur, cv::Point(183, 19), 5, cv::Scalar(0,255*CPI[7],255-255*CPI[7]), -1, 8 );
+	circle(imageCapteur, cv::Point(97, 20), 5, cv::Scalar(0,255*CPI[8],255-255*CPI[8]), -1, 8 );
+
 	// PS
 	circle(imageCapteur, cv::Point(27, 181), 5, cv::Scalar(0,255*PS[1],255-255*PS[1]), -1, 8 );
 	circle(imageCapteur, cv::Point(241, 230), 5, cv::Scalar(0,255*PS[2],255-255*PS[2]), -1, 8 );
