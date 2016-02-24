@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 			stateSwitch+=ChangeSwitchState(2); 
 			stateStop+=ChangeStopState(3);
 			stateStop+=ChangeStopState(7);
-			first=false;
+			firstg=false;
 		}
 
 
