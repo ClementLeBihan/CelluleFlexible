@@ -154,7 +154,7 @@ void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 	circle(imageCapteur, cv::Point(269, 113), 16, cv::Scalar(255,255,255), -1); //A11
 	circle(imageCapteur, cv::Point(21, 125), 16, cv::Scalar(255,255,255), -1); //A12
 
-	if(DD[1]) line(imageCapteur, cv::Point(14, 113), cv::Point(14, 137), cv::Scalar(0,100,0), 3); //A01
+	if(DD[1]) line(imageCapteur, cv::Point(14, 228), cv::Point(14, 253), cv::Scalar(0,100,0), 3); //A01
 	if(DG[1]) ellipse(imageCapteur, cv::Point(37, 220),cv::Size(23,23),0,92,163,cv::Scalar(0,100,0), 3);
 	if(DD[2]) ellipse(imageCapteur, cv::Point(290, 268),cv::Size(23,23),0,183,255,cv::Scalar(0,100,0), 3);//A02
 	if(DG[2]) line(imageCapteur, cv::Point(257, 245), cv::Point(283, 245), cv::Scalar(0,100,0), 3);
@@ -176,9 +176,8 @@ void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 	if(DG[10]) ellipse(imageCapteur, cv::Point(358, 144),cv::Size(23,23),0,282,357,cv::Scalar(0,100,0), 3);
 	if(DD[11]) ellipse(imageCapteur, cv::Point(290, 98),cv::Size(23,23),0,110,183,cv::Scalar(0,100,0), 3); //A11
 	if(DG[11]) line(imageCapteur, cv::Point(257, 121), cv::Point(281, 121), cv::Scalar(0,100,0), 3);
-	if(DD[12]) line(imageCapteur, cv::Point(14, 228), cv::Point(14, 253), cv::Scalar(0,100,0), 3); //A12
+	if(DD[12]) line(imageCapteur, cv::Point(14, 113), cv::Point(14, 137), cv::Scalar(0,100,0), 3); //A12
 	if(DG[12]) ellipse(imageCapteur, cv::Point(38, 145),cv::Size(23,23),0,194,268,cv::Scalar(0,100,0), 3);
-
     updateUI();
 }
 
@@ -279,7 +278,7 @@ int main(int argc, char **argv)
 				ros::spinOnce();				
 				TPrailSensorState.publish(sensorRail);
 				TPstationSensorState.publish(sensorStation);
-		
+
 				if(StopNumber.data!=StopNumberOld){
 					VREPStopController.publish(StopNumber);
 				}

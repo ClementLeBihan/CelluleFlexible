@@ -72,14 +72,22 @@ int main(int argc, char **argv)
 	std_msgs::Int32 resultStopmain; 
 	int stateStop, oldstateStop(0), stateSwitch, oldstateSwitch(0);
 	bool first=true;
-	bool first2=false;	
+	bool first2=false;
 
+	bool firstg=true;
+	bool firstg2=true;
+
+	ros::Time end;
 	ros::Rate loop_rate(25);
 
 	while (ros::ok())
 	{
 		stateStop=0;
 		stateSwitch=0;
+		
+
+	/////// exemple coté droit (simu avec 1 et 5)
+
 		if (PS[6] == 1){	
 			stateStop+=ChangeStopState(7); 						
 		}
@@ -111,6 +119,36 @@ int main(int argc, char **argv)
 			first=true;							
 		}
 
+
+	/////// exemple coté gauche (simu avec 2 et 6)
+
+		if (PS[14] == 1){	
+			stateStop+=ChangeStopState(19);						
+		}
+		if (CP[9] == 1){	
+			stateStop+=ChangeStopState(22);	
+			stateStop+=ChangeStopState(19);
+			stateSwitch+=ChangeSwitchState(11); 
+			stateSwitch+=ChangeSwitchState(12); 									
+		}
+
+
+		if (CPI[1] == 1){
+			stateSwitch+=ChangeSwitchState(12);	
+			stateStop+=ChangeStopState(3);
+			stateStop+=ChangeStopState(22);	
+			stateSwitch+=ChangeSwitchState(1);	
+			stateSwitch+=ChangeSwitchState(2);	
+		}
+
+		if((CP[3]==1)&&(firstg==true)){		
+			stateSwitch+=ChangeSwitchState(2); 
+			stateStop+=ChangeStopState(3);
+			stateStop+=ChangeStopState(7);
+			first=false;
+		}
+
+
 		PublishStopChange(stateStop, oldstateStop ,stopStatePublisher);
 		PublishSwitchChange(stateSwitch, oldstateSwitch ,switchStatePublisher);
 		oldstateStop=stateStop;
@@ -124,3 +162,6 @@ int main(int argc, char **argv)
 
 
 }
+
+
+
