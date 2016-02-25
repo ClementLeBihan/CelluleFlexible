@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 	{
 
 	/////// exemple coté droit (simu avec 1 et 5)
-
+	/*
 		if (CapteurSt.PS[6] == 1){	
 			stopSt.ChangeStopState(7); 						
 		}
@@ -102,23 +102,16 @@ int main(int argc, char **argv)
 			switchSt.ChangeSwitchState(2);	
 		}
 
-<<<<<<< HEAD
+
 		if((CapteurSt.CP[3]==1)&&(firstg==true)){		
 			switchSt.ChangeSwitchState(2); 
 			stopSt.ChangeStopState(3);
 			stopSt.ChangeStopState(7);
-			first=false;
-=======
-		if((CP[3]==1)&&(firstg==true)){		
-			stateSwitch+=ChangeSwitchState(2); 
-			stateStop+=ChangeStopState(3);
-			stateStop+=ChangeStopState(7);
-			firstg=false;
->>>>>>> b8f047e50db888dd8f148c97ec139a19fd9e17c9
-		}
+			first=false;}
 
 		ros::spinOnce();
 		loop_rate.sleep();
+	*/
 
 	}
 

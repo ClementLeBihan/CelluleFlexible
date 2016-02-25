@@ -8,26 +8,30 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-void switchState::ChangeSwitchState(int numSwitch)
-{
-	if((stateSwitches & int(pow(2,numSwitch-1)))>0) stateSwitches = stateSwitches - int(pow(2,numSwitch-1));
-	else stateSwitches = stateSwitches + int(pow(2,numSwitch-1));
-
-	PublishSwitchChange();
-}
-void switchState::PublishSwitchChange()
-{
-	std_msgs::Int32 resultSwitch; 
-	resultSwitch.data = stateSwitches;
-
-	switchStatePublisher.publish(resultSwitch);
-
-	stateSwitches = 0;
-}
+#include "tp_etudiant/Msg_SwitchControl.h"
 
 switchState::switchState () {}
 
 void switchState::init(ros::NodeHandle n)
 {
-	switchStatePublisher = n.advertise<std_msgs::Int32>("/tp_etudiant/switchState", 20);
+	switchStatePublisher = n.advertise<tp_etudiant::Msg_SwitchControl>("/tp_etudiant/switchState", 1);
+}
+
+void switchState::unlockSwitch(int numSwitch)
+{
+	stateSwitches.ver[numSwitch] = 0;
+}
+void switchState::lockSwitch(int numSwitch)
+{
+	stateSwitches.ver[numSwitch] = 1;
+}
+void switchState::turnRight(int numSwitch)
+{
+	stateSwitches.RD[numSwitch] = 1;
+	stateSwitches.RG[numSwitch] = 0;		
+}
+
+void switchState::PublishSwitchChange()
+{
+	switchStatePublisher.publish(stateSwitches);
 }

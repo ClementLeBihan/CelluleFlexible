@@ -1,18 +1,21 @@
 #ifndef SWITCH_STATE
 #define SWITCH_STATE
 #include <ros/ros.h>
+#include "tp_etudiant/Msg_SwitchControl.h"
 
 class switchState
 {
 private:
 	ros::Publisher switchStatePublisher;
-	int stateSwitches;
+	tp_etudiant::Msg_SwitchControl stateSwitches;
 public:
 
 	switchState ();
-	void init(ros::NodeHandle n);
-	void ChangeSwitchState(int numSwitch);
+	void unlockSwitch(int numSwitch);
+	void lockSwitch(int numSwitch);
+	void turnRight(int numSwitch);
 	void PublishSwitchChange();
+	void init(ros::NodeHandle n);
 };
 
 #endif
