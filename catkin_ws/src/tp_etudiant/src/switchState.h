@@ -14,7 +14,7 @@ public:
 	void unlockSwitch(int numSwitch);
 	void lockSwitch(int numSwitch);
 	void turnRight(int numSwitch);
-	void PublishSwitchChange();
+	void publish();
 	void init(ros::NodeHandle n);
 };
 

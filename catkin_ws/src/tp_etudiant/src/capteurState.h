@@ -7,9 +7,9 @@
 class capteurState
 {
 private:
-	int PS[17],CPI[9],CP[11], DD[13], DG[13];
 	ros::Subscriber subSensorState;
 public:
+	int PS[17],CPI[9],CP[11], DD[13], DG[13];
 	capteurState ();
 	void init(ros::NodeHandle n);
 	void SensorCallback(const tp_etudiant::Msg_SensorState::ConstPtr& msg);
