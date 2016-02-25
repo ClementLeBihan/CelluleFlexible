@@ -8,26 +8,25 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-int stopState::ChangeStopState(int numStop)
-{
-	if((stateStop & int(pow(2,numStop-1)))>0) stateStop = stateStop - int(pow(2,numStop-1));
-	else stateStop = stateStop + int(pow(2,numStop-1));
+stopState::stopState () {}
 
-	PublishStopChange();
+void stopState::stop(int numStop)
+{
+	stateStop.ST[numStop] = 1;
+	stateStop.GO[numStop] = 0;
+}
+
+void stopState::go(int numStop)
+{
+	stateStop.ST[numStop] = 0;
+	stateStop.GO[numStop] = 1;
 }
 void stopState::PublishStopChange()
 {
-	std_msgs::Int32 resultStop; 
-	resultStop.data = stateStop;
-
-	stopStatePublisher.publish(resultStop);
-
-	stateStop = 0;
+	stopStatePublisher.publish(stateStop);
 }
-
-stopState::stopState () {}
 
 void stopState::init(ros::NodeHandle n)
 {
-	stopStatePublisher = n.advertise<std_msgs::Int32>("/tp_etudiant/stopState", 20);
+	stopStatePublisher = n.advertise<tp_etudiant::Msg_StopControl>("/tp_etudiant/stopState", 1);
 }

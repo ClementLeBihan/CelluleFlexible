@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 	{
 
 	/////// exemple coté droit (simu avec 1 et 5)
-
+	/*
 		if (CapteurSt.PS[6] == 1){	
 			stopSt.ChangeStopState(7); 						
 		}
@@ -111,6 +111,7 @@ int main(int argc, char **argv)
 
 		ros::spinOnce();
 		loop_rate.sleep();
+	*/
 
 	}
 

@@ -6,24 +6,25 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-void capteurState::CapteurCallbackRail(const std_msgs::Int32::ConstPtr& msg)
-{
-	for(int i=1;i<=16;i++) PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-	for(int i=1;i<=10;i++) CP[i] = (msg->data & (int32_t)pow(2,15+i)) > 0;
-}
+#include <tp_etudiant/Msg_SensorState.h>
 
-void capteurState::CapteurCallbackStation(const std_msgs::Int32::ConstPtr& msg)
+void capteurState::SensorCallback(const tp_etudiant::Msg_SensorState::ConstPtr& msg)
 {
-	for(int i=1;i<=8;i++) CPI[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
+	for(int i=1;i<=16;i++) PS[i] = msg->PS[i];
+	for(int i=1;i<=10;i++) CP[i] = msg->CP[i];
+	for(int i=1;i<=8;i++) CPI[i] = msg->CPI[i];
+	for(int i=1;i<=12;i++) DG[i] = msg->DG[i];
+	for(int i=1;i<=12;i++) DD[i] = msg->DD[i];
 }
 
 capteurState::capteurState () {
 	for(int i=1;i<=16;i++) PS[i] = 0;
 	for(int i=1;i<=10;i++) CP[i] = 0;
 	for(int i=1;i<=8;i++) CPI[i] = 0;
+	for(int i=1;i<=12;i++) DG[i] = 0;
+	for(int i=1;i<=12;i++) DD[i] = 0;
 }
 void capteurState::init(ros::NodeHandle n)
 {
-	subSensorRailState = n.subscribe("/simulation/RailSensorState", 1, &capteurState::CapteurCallbackRail,this);
-	subSensorStationState = n.subscribe("/simulation/StationSensorState", 1, &capteurState::CapteurCallbackStation, this);
+	subSensorState = n.subscribe("/simulation/SensorState", 1, &capteurState::SensorCallback,this);
 }
