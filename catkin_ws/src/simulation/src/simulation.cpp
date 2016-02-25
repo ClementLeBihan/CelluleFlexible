@@ -38,6 +38,7 @@ using namespace std;
 #include <simulation/Msg_StopControl.h>
 #include <simulation/Msg_SensorState.h>
 
+#include <vector>
 
 #include <ros/ros.h>
 
@@ -48,9 +49,6 @@ cv::Mat imageSimu = cv::Mat::zeros(512, 1024, CV_8UC3 );
 cv::Mat imageTot = cv::Mat::zeros(960, 1180, CV_8UC3 );
 cv::Mat playButton = cv::imread("PlayButton.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat pauseButton = cv::imread("PauseButton.png",CV_LOAD_IMAGE_COLOR);
-
-int numSwitch, direction, oldNumSwitch(0), oldDirection(0); 
-int handle_A[NB_AIGUILLAGE+1];
 
 simulation::Msg_StopControl StopControl;
 simulation::Msg_SwitchControl SwitchControl;
@@ -205,11 +203,11 @@ void StateSwitchCallBack(const simulation::Msg_SwitchControl::ConstPtr&  msg)
 	SwitchControl.LOCK = msg->LOCK;
 
 	for (int i=1;i<=12;i++){
-		if (msg->RD[i]==1)
+		if (msg->RD[i]==true)
 			SwitchRightControl+=pow(2,i-1);
-		if (msg->RG[i]==1)
+		if (msg->RG[i]==true)
 			SwitchLeftControl+=pow(2,i-1);
-		if (msg->LOCK[i]==1)
+		if (msg->LOCK[i]==true)
 			SwitchLockControl+=pow(2,i-1);
 	}
 
@@ -231,9 +229,9 @@ void StateStopCallBack(const simulation::Msg_StopControl::ConstPtr&  msg)
 	StopControl.GO = msg->GO;
 
 	for (int i=1;i<=24;i++){
-		if (msg->ST[i]==1)
+		if (msg->ST[i]==true)
 			StopControlInt+=pow(2,i-1);
-		if (msg->GO[i]==1)
+		if (msg->GO[i]==true)
 			GoControlInt+=pow(2,i-1);
 	}
 
@@ -300,7 +298,6 @@ int main(int argc, char **argv)
 		 		ros::Subscriber VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
 				ros::Subscriber VREPsubCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
 
-
 			///////// VREP PUBLISHERS ////////
 				VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerRight", 1);
 				VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerLeft", 1);
@@ -319,14 +316,10 @@ int main(int argc, char **argv)
 				ros::Subscriber TPsubSwitchState = nh.subscribe("tp_etudiant/TPSwitchControl", 1, StateSwitchCallBack);
 				ros::Subscriber TPsubStopState = nh.subscribe("tp_etudiant/TPStopControl", 1, StateStopCallBack);
 
-
-			ros::Rate loop_rate(25);
-
 			while (ros::ok())
 			{
 				ros::spinOnce();
 				TPrailSensorState.publish(SensorState);
-				loop_rate.sleep();		
 			}				
 				
 
