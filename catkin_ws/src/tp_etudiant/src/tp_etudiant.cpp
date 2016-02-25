@@ -112,9 +112,10 @@ int main(int argc, char **argv)
 			stopSt.ChangeStopState(7);
 			first=false;}
 
+		*/
 		ros::spinOnce();
 		loop_rate.sleep();
-	*/
+	
 
 	}
 

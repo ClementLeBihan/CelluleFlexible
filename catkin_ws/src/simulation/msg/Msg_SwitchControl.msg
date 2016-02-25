@@ -1,5 +1,5 @@
 Header header
 
-bool[] LOCK
-bool[] RD
-bool[] RG
+bool[13] LOCK
+bool[13] RD
+bool[13] RG
