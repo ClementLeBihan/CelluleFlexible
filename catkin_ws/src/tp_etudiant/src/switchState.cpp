@@ -8,13 +8,13 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-#include "tp_etudiant/Msg_SwitchControl.h"
+#include "simulation/Msg_SwitchControl.h"
 
 switchState::switchState () {}
 
 void switchState::init(ros::NodeHandle n)
 {
-	switchStatePublisher = n.advertise<tp_etudiant::Msg_SwitchControl>("/tp_etudiant/TPSwitchControl", 1);
+	switchStatePublisher = n.advertise<simulation::Msg_SwitchControl>("/tp_etudiant/TPSwitchControl", 1);
 }
 
 void switchState::unlockSwitch(int numSwitch)
@@ -29,6 +29,11 @@ void switchState::turnRight(int numSwitch)
 {
 	stateSwitches.RD[numSwitch] = 1;
 	stateSwitches.RG[numSwitch] = 0;		
+}
+void switchState::turnLeft(int numSwitch)
+{
+	stateSwitches.RD[numSwitch] = 0;
+	stateSwitches.RG[numSwitch] = 1;		
 }
 
 void switchState::publish()

@@ -1,13 +1,13 @@
 #ifndef STOP_STATE
 #define STOP_STATE
 #include <ros/ros.h>
-#include "tp_etudiant/Msg_StopControl.h"
+#include "simulation/Msg_StopControl.h"
 
 class stopState
 {
 private:
 	ros::Publisher stopStatePublisher;
-	tp_etudiant::Msg_StopControl stateStop;
+	simulation::Msg_StopControl stateStop;
 public:
 
 	stopState ();

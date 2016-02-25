@@ -18,13 +18,3 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 add_executable(tp_etudiant src/tp_etudiant.cpp src/capteurState.cpp src/switchState.cpp src/stopState.cpp) 
 target_link_libraries(tp_etudiant ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(tp_etudiant vrep_common_generate_messages_cpp)
-add_message_files(
-	FILES
-	Msg_SensorState.msg
-	Msg_StopControl.msg
-	Msg_SwitchControl.msg
-)
-generate_messages( DEPENDENCIES std_msgs)
-catkin_package( CATKIN_DEPENDS message_runtime) 
-
-

@@ -48,10 +48,13 @@ int main(int argc, char **argv)
 	{
 
 	/////// exemple coté droit (simu avec 1 et 5)
-	/*
+	
 		if (CapteurSt.PS[6] == 1){	
-			stopSt.ChangeStopState(7); 						
-		}
+			ROS_INFO("PS6");
+			switchSt.unlockSwitch(7); 
+			switchSt.turnRight(7);
+									
+		} /*
 		if (CapteurSt.CP[4] == 1){	
 			stopSt.ChangeStopState(7);
 			stopSt.ChangeStopState(12); 	

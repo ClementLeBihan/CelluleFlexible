@@ -6,9 +6,9 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-#include <tp_etudiant/Msg_SensorState.h>
+#include <simulation/Msg_SensorState.h>
 
-void capteurState::SensorCallback(const tp_etudiant::Msg_SensorState::ConstPtr& msg)
+void capteurState::SensorCallback(const simulation::Msg_SensorState::ConstPtr& msg)
 {
 	for(int i=1;i<=16;i++) PS[i] = msg->PS[i];
 	for(int i=1;i<=10;i++) CP[i] = msg->CP[i];

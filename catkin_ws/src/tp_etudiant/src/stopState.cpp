@@ -1,5 +1,6 @@
 #include "stopState.h"
 #include <std_msgs/Int32.h>
+#include <simulation/Msg_StopControl.h>
 #include <ros/ros.h>
 
 #include <math.h> // pow(2,4) = 2⁴
@@ -28,5 +29,5 @@ void stopState::publish()
 
 void stopState::init(ros::NodeHandle n)
 {
-	stopStatePublisher = n.advertise<tp_etudiant::Msg_StopControl>("/tp_etudiant/TPStopControl", 1);
+	stopStatePublisher = n.advertise<simulation::Msg_StopControl>("/tp_etudiant/TPStopControl", 1);
 }
