@@ -28,5 +28,5 @@ void stopState::publish()
 
 void stopState::init(ros::NodeHandle n)
 {
-	stopStatePublisher = n.advertise<tp_etudiant::Msg_StopControl>("/tp_etudiant/stopState", 1);
+	stopStatePublisher = n.advertise<tp_etudiant::Msg_StopControl>("/tp_etudiant/TPStopControl", 1);
 }
