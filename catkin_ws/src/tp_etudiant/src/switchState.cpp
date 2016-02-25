@@ -19,11 +19,11 @@ void switchState::init(ros::NodeHandle n)
 
 void switchState::unlockSwitch(int numSwitch)
 {
-	stateSwitches.ver[numSwitch] = 0;
+	stateSwitches.LOCK[numSwitch] = 0;
 }
 void switchState::lockSwitch(int numSwitch)
 {
-	stateSwitches.ver[numSwitch] = 1;
+	stateSwitches.LOCK[numSwitch] = 1;
 }
 void switchState::turnRight(int numSwitch)
 {
