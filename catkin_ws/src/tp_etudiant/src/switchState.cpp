@@ -14,7 +14,7 @@ switchState::switchState () {}
 
 void switchState::init(ros::NodeHandle n)
 {
-	switchStatePublisher = n.advertise<tp_etudiant::Msg_SwitchControl>("/tp_etudiant/switchState", 1);
+	switchStatePublisher = n.advertise<tp_etudiant::Msg_SwitchControl>("/tp_etudiant/TPSwitchControl", 1);
 }
 
 void switchState::unlockSwitch(int numSwitch)
