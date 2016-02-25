@@ -31,7 +31,7 @@ void switchState::turnRight(int numSwitch)
 	stateSwitches.RG[numSwitch] = 0;		
 }
 
-void switchState::PublishSwitchChange()
+void switchState::publish()
 {
 	switchStatePublisher.publish(stateSwitches);
 }

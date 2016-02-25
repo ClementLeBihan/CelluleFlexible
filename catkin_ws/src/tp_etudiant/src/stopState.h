@@ -13,7 +13,7 @@ public:
 	stopState ();
 	void stop(int numStop);
 	void go(int numStop);
-	void PublishStopChange();
+	void publish();
 	void init(ros::NodeHandle n);
 };
 

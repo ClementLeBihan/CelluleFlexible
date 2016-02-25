@@ -21,7 +21,7 @@ void stopState::go(int numStop)
 	stateStop.ST[numStop] = 0;
 	stateStop.GO[numStop] = 1;
 }
-void stopState::PublishStopChange()
+void stopState::publish()
 {
 	stopStatePublisher.publish(stateStop);
 }
