@@ -5,18 +5,10 @@
 #include <signal.h>
 #include <termios.h>
 #include <sstream>
-#include <string>
-#include <math.h>
-#include <cmath>
 #include <stdint.h>
-#include <std_msgs/Int16MultiArray.h>
-#include <std_msgs/String.h>
 #include "capteurState.h"
 #include "switchState.h"
 #include "stopState.h"
-#include <std_msgs/Float64.h>
-#include <std_msgs/Int32.h>
-#include <std_msgs/Int32MultiArray.h>
 #include <ros/ros.h>
 
 int main(int argc, char **argv)
@@ -33,8 +25,6 @@ int main(int argc, char **argv)
 	stopState stopSt;
 	stopSt.init(nh);
 
-	std_msgs::Int32 resultStopmain; 
-	int stateStop, oldstateStop(0), stateSwitch, oldstateSwitch(0);
 	bool first=true;
 	bool first2=false;
 	bool firstdd6=false;
