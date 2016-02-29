@@ -20,19 +20,15 @@ using namespace std;
 
 // Used data structures:
 #include "vrep_common/VrepInfo.h"
-#include "vrep_common/simRosGetObjectHandle.h"
-#include "vrep_common/simRosSetJointTargetPosition.h"
 #include "vrep_common/simRosLoadModel.h"
 #include "vrep_common/simRosPauseSimulation.h"
 #include "vrep_common/simRosStartSimulation.h"
-#include "std_msgs/String.h"
 
 // Used API services:
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
 // Msg
-#include <std_msgs/Float64.h>
 #include <std_msgs/Int32.h>
 #include <simulation/Msg_SwitchControl.h>
 #include <simulation/Msg_StopControl.h>
@@ -268,6 +264,7 @@ int main(int argc, char **argv)
 
 			//Demarrage de la simulation
 				system("rosservice call /vrep/simRosStartSimulation > /dev/null");
+				system("rosservice call /vrep/simRosPauseSimulation > /dev/null");
 		}
     else if (pid > 0) 
 		{
@@ -287,37 +284,37 @@ int main(int argc, char **argv)
 			client_simRosPauseSimulation = nh.serviceClient<vrep_common::simRosPauseSimulation>("/vrep/simRosPauseSimulation");	
 			///////// SUBSCRIBERS ////////
 
-				// Image Streaming 
-		 		cv::namedWindow("Simulation");
-				cv::startWindowThread();
-				cv::moveWindow("Simulation",0,0);
-				cv::setMouseCallback("Simulation", onMouse,0);
-				image_transport::ImageTransport it(nh);
-				image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
+			// Image Streaming 
+	 		cv::namedWindow("Simulation");
+			cv::startWindowThread();
+			cv::moveWindow("Simulation",0,0);
+			cv::setMouseCallback("Simulation", onMouse,0);
+			image_transport::ImageTransport it(nh);
+			image_transport::Subscriber subImage = it.subscribe("vrep/VisionSensorData", 1, imageCallback);
 
-				// Sensors State
-		 		ros::Subscriber VREPsubRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
-		 		ros::Subscriber VREPsubStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
-		 		ros::Subscriber VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
-				ros::Subscriber VREPsubCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
+			// Sensors State
+	 		ros::Subscriber VREPsubRailSensor = nh.subscribe("vrep/RailSensor", 1, CapteurCallbackRail);
+	 		ros::Subscriber VREPsubStationSensor = nh.subscribe("vrep/StationSensor", 1, CapteurCallbackStation);
+	 		ros::Subscriber VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, CapteurCallbackSwitch);
+			ros::Subscriber VREPsubCapteurState = nh.subscribe("vrep/RailSensor",1, CapteurStateCallback);
 
 			///////// VREP PUBLISHERS ////////
-				VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerRight", 1);
-				VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerLeft", 1);
-				VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerLock", 1);
-				VREPStopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
-				VREPGoController = nh.advertise<std_msgs::Int32>("/simulation/GoController", 1);
+			VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerRight", 1);
+			VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerLeft", 1);
+			VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/simulation/SwitchControllerLock", 1);
+			VREPStopController = nh.advertise<std_msgs::Int32>("/simulation/StopController", 1);
+			VREPGoController = nh.advertise<std_msgs::Int32>("/simulation/GoController", 1);
 
 
 
 			///////// TP PUBLISHERS ////////
-				ros::Publisher TPrailSensorState = nh.advertise<simulation::Msg_SensorState>("/simulation/SensorState", 1);
+			ros::Publisher TPrailSensorState = nh.advertise<simulation::Msg_SensorState>("/simulation/SensorState", 1);
 
 
 			///////// TP_ETUDIANT SUBSCRIBER ////////
 
-				ros::Subscriber TPsubSwitchState = nh.subscribe("tp_etudiant/TPSwitchControl", 1, StateSwitchCallBack);
-				ros::Subscriber TPsubStopState = nh.subscribe("tp_etudiant/TPStopControl", 1, StateStopCallBack);
+			ros::Subscriber TPsubSwitchState = nh.subscribe("tp_etudiant/TPSwitchControl", 1, StateSwitchCallBack);
+			ros::Subscriber TPsubStopState = nh.subscribe("tp_etudiant/TPStopControl", 1, StateStopCallBack);
 
 			while (ros::ok())
 			{
