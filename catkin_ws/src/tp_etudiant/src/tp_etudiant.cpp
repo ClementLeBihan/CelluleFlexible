@@ -43,6 +43,7 @@ int main(int argc, char **argv)
 	bool firstdg5=true;
 
 	bool firstg=true;
+	bool second=false;
 	bool firstg2=true;
 
 	ros::Rate loop_rate(25);
@@ -106,38 +107,59 @@ int main(int argc, char **argv)
 		if ((CapteurSt.DD[8] == 1)&&(firstdd8==true)){
 			stopSt.go(17); 	
 			firstdd8=false;	
-		}/**/
+		}
 
-/*
+
 
 	/////// exemple coté gauche (simu avec 2 et 6)
 
 		if (CapteurSt.PS[14] == 1){	
-			stopSt.ChangeStopState(19);						
+			stopSt.stop(19);
 		}
-		if (CapteurSt.CP[9] == 1){	
-			stopSt.ChangeStopState(22);	
-			stopSt.ChangeStopState(19);
-			switchSt.ChangeSwitchState(11); 
-			switchSt.ChangeSwitchState(12); 									
+		if (CapteurSt.CP[9] == 1){
+			stopSt.go(19);	
+			stopSt.stop(20);
+			stopSt.stop(22);								
 		}
-
-
-		if (CapteurSt.CPI[1] == 1){
-			switchSt.ChangeSwitchState(12);	
-			stopSt.ChangeStopState(3);
-			stopSt.ChangeStopState(22);	
-			switchSt.ChangeSwitchState(1);	
-			switchSt.ChangeSwitchState(2);	
+		if (CapteurSt.CPI[8] == 1){
+			stopSt.stop(21);								
+			stopSt.go(20);
+			second=true;
 		}
+		if ((CapteurSt.CP[9] == 1)&&(second==true)){
+			stopSt.go(22);
+			second=false;
+		}
+		if (CapteurSt.CP[1] == 1){
+			stopSt.go(21);
+			stopSt.stop(3);								
+			switchSt.unlockSwitch(1); 
+			switchSt.turnLeft(1);	
+			switchSt.lockSwitch(1); 
 
-
-		if((CapteurSt.CP[3]==1)&&(firstg==true)){		
-			switchSt.ChangeSwitchState(2); 
-			stopSt.ChangeStopState(3);
-			stopSt.ChangeStopState(7);
-			first=false;}
-*/		
+			switchSt.unlockSwitch(2); 
+			switchSt.turnLeft(2);	
+			switchSt.lockSwitch(2); 
+			
+		}
+		if (CapteurSt.PS[2] == 1){	
+			stopSt.go(3);	
+			stopSt.stop(5);									
+		}
+		if ((CapteurSt.PS[4] == 1)&&(firstg==true)){	
+			switchSt.unlockSwitch(2); 
+			switchSt.turnRight(2);	
+			switchSt.lockSwitch(2);
+			stopSt.stop(7);									
+			firstg2=false;	
+			firstg=false;							
+		}
+		if ((CapteurSt.DD[2] == 1)&&(firstg2==false)){	
+			stopSt.go(5);	
+			firstg2=true;									
+								
+		}
+		
 		ros::spinOnce();
 		loop_rate.sleep();
 
