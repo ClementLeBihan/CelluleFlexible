@@ -1,4 +1,4 @@
 Header header
 
-bool[] ST
-bool[] GO
+bool[25] ST
+bool[25] GO

@@ -9,18 +9,23 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-stopState::stopState () {}
+stopState::stopState () {
+	for(int i=1;i<=24;i++) stateStop.ST[i] = 0;
+	for(int i=1;i<=24;i++) stateStop.GO[i] = 1;
+}
 
 void stopState::stop(int numStop)
 {
 	stateStop.ST[numStop] = 1;
 	stateStop.GO[numStop] = 0;
+	publish();
 }
 
 void stopState::go(int numStop)
 {
 	stateStop.ST[numStop] = 0;
 	stateStop.GO[numStop] = 1;
+	publish();
 }
 void stopState::publish()
 {
