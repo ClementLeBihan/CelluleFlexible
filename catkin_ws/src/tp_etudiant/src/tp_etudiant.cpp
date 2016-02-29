@@ -116,6 +116,7 @@ int main(int argc, char **argv)
 		ros::spinOnce();
 		loop_rate.sleep();
 	
+		ROS_INFO("PS[5] = %d", CapteurSt.PS[5]);
 
 	}
 
