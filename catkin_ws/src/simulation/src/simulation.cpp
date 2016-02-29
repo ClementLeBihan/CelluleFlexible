@@ -46,7 +46,7 @@ using namespace std;
 
 cv::Mat imageCapteur = cv::imread("Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat imageSimu = cv::Mat::zeros(512, 1024, CV_8UC3 );
-cv::Mat imageTot = cv::Mat::zeros(960, 1180, CV_8UC3 );
+cv::Mat imageTot = cv::Mat::zeros(980, 1180, CV_8UC3 );
 cv::Mat playButton = cv::imread("PlayButton.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat pauseButton = cv::imread("PauseButton.png",CV_LOAD_IMAGE_COLOR);
 
@@ -54,17 +54,15 @@ simulation::Msg_StopControl StopControl;
 simulation::Msg_SwitchControl SwitchControl;
 simulation::Msg_SensorState SensorState;
 
-int handle_Shuttle[7];
-static int n_shuttle=0;
-
+ros::ServiceClient client_simRosStartSimulation,client_simRosPauseSimulation; 
 
 ros::Publisher VREPSwitchControllerRight, VREPSwitchControllerLeft, VREPSwitchControllerLock,  VREPStopController, VREPGoController;
 
 void updateUI()
 {
 	imageSimu.copyTo(imageTot.rowRange(70,582).colRange(78,1102));
-	imageCapteur.copyTo(imageTot.rowRange(590,956).colRange(78,1102));
-    	cv::imshow("Simulation", imageTot);
+  imageCapteur.copyTo(imageTot.rowRange(600,966).colRange(78,1102));
+  cv::imshow("Simulation", imageTot);
 }
 
 // Fonction qui stocke dans capteur 1 la valeur du capteur (0 ou 1)
@@ -95,11 +93,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 }
 void onMouse( int event, int x, int y, int, void* )
 {
-    if( event != cv::EVENT_LBUTTONDOWN )
-        return;
-	if(y>25 && y < 82){
-		if(x>364 && x<537) system("rosservice call /vrep/simRosStartSimulation > /dev/null");
-		else if(x>564 && x<737) system("rosservice call /vrep/simRosPauseSimulation > /dev/null");
+	static vrep_common::simRosStartSimulation srv_StartSimulation;		
+	static vrep_common::simRosPauseSimulation srv_PauseSimulation;	
+
+  if( event != cv::EVENT_LBUTTONDOWN ) return;
+	else if(y>25 && y < 82){
+    if(x>364 && x<537) 	client_simRosStartSimulation.call(srv_StartSimulation);
+    else if(x>564 && x<737) client_simRosPauseSimulation.call(srv_PauseSimulation);
 	}
 }
 
@@ -146,18 +146,18 @@ void CapteurStateCallback(const std_msgs::Int32::ConstPtr& msg)
 	circle(imageCapteur, cv::Point(29, 26), 5, cv::Scalar(0,255*SensorState.PS[16],255-255*SensorState.PS[16]), -1, 8 );
 
 	// Aiguillages
-	circle(imageCapteur, cv::Point(21, 241), 16, cv::Scalar(255,255,255), -1); //A01
-	circle(imageCapteur, cv::Point(270, 253), 16, cv::Scalar(255,255,255), -1); //A02
-	circle(imageCapteur, cv::Point(378, 235), 16, cv::Scalar(255,255,255), -1); //A03
-	circle(imageCapteur, cv::Point(642, 235), 16, cv::Scalar(255,255,255), -1); //A04
-	circle(imageCapteur, cv::Point(751, 253), 16, cv::Scalar(255,255,255), -1); //A05
-	circle(imageCapteur, cv::Point(1002, 240), 16, cv::Scalar(255,255,255), -1); //A06
-	circle(imageCapteur, cv::Point(1000, 127), 16, cv::Scalar(255,255,255), -1); //A07
-	circle(imageCapteur, cv::Point(752, 112), 16, cv::Scalar(255,255,255), -1); //A08
-	circle(imageCapteur, cv::Point(645, 127), 16, cv::Scalar(255,255,255), -1); //A09
-	circle(imageCapteur, cv::Point(377, 129), 16, cv::Scalar(255,255,255), -1); //A10
-	circle(imageCapteur, cv::Point(269, 113), 16, cv::Scalar(255,255,255), -1); //A11
-	circle(imageCapteur, cv::Point(21, 125), 16, cv::Scalar(255,255,255), -1); //A12
+	circle(imageCapteur, cv::Point(21, 241), 16, cv::Scalar(200,200,200), -1); //A01
+	circle(imageCapteur, cv::Point(270, 253), 16, cv::Scalar(200,200,200), -1); //A02
+	circle(imageCapteur, cv::Point(378, 235), 16, cv::Scalar(200,200,200), -1); //A03
+	circle(imageCapteur, cv::Point(642, 235), 16, cv::Scalar(200,200,200), -1); //A04
+	circle(imageCapteur, cv::Point(751, 253), 16, cv::Scalar(200,200,200), -1); //A05
+	circle(imageCapteur, cv::Point(1002, 240), 16, cv::Scalar(200,200,200), -1); //A06
+	circle(imageCapteur, cv::Point(1000, 127), 16, cv::Scalar(200,200,200), -1); //A07
+	circle(imageCapteur, cv::Point(752, 112), 16, cv::Scalar(200,200,200), -1); //A08
+	circle(imageCapteur, cv::Point(645, 127), 16, cv::Scalar(200,200,200), -1); //A09
+	circle(imageCapteur, cv::Point(377, 129), 16, cv::Scalar(200,200,200), -1); //A10
+	circle(imageCapteur, cv::Point(269, 113), 16, cv::Scalar(200,200,200), -1); //A11
+	circle(imageCapteur, cv::Point(21, 125), 16, cv::Scalar(200,200,200), -1); //A12
 
 	if(SensorState.DD[1]) line(imageCapteur, cv::Point(14, 228), cv::Point(14, 253), cv::Scalar(0,100,0), 3); //A01
 	if(SensorState.DG[1]) ellipse(imageCapteur, cv::Point(37, 220),cv::Size(23,23),0,92,163,cv::Scalar(0,100,0), 3);
@@ -282,6 +282,9 @@ int main(int argc, char **argv)
 			imageTot.setTo(cv::Scalar(200,200,200));
 			playButton.copyTo(imageTot.rowRange(10,67).colRange(364,537));
 			pauseButton.copyTo(imageTot.rowRange(10,67).colRange(564,737));
+
+			client_simRosStartSimulation = nh.serviceClient<vrep_common::simRosStartSimulation>("/vrep/simRosStartSimulation");	
+			client_simRosPauseSimulation = nh.serviceClient<vrep_common::simRosPauseSimulation>("/vrep/simRosPauseSimulation");	
 			///////// SUBSCRIBERS ////////
 
 				// Image Streaming 
