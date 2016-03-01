@@ -19,7 +19,8 @@
 	- catkin_make
 
 3. **Don't forget to launch roscore before launching our application**
-	- ~/Projet_Long/simulation
+	- ~/Projet_Long/simulation 1 2 5 6
+	- ~/Projet_Long/tp_etudiant
 
 ## MORE INFOS
 
