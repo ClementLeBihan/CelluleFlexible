@@ -245,8 +245,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     else if (pid == 0) 
 		{
-      		system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
-		  	sleep(2);
+			system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
+			sleep(2);
 			ros::init(argc, argv, "simulation2");
 			ros::NodeHandle nh2;
 
