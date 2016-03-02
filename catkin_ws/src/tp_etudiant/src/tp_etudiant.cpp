@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 				if (SensorSt.CP[4] == 1){
 					stopSt.go(7); 	
 					stopSt.stop(8); 
-					//switchSt.unlockSwitch(5); 
+					switchSt.unlockSwitch(5); 
 					switchSt.turnLeft(5);
 					stopSt.stop(12); 
 					switchSt.unlockSwitch(6); 
