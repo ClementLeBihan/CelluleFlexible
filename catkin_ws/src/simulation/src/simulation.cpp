@@ -42,9 +42,13 @@ using namespace std;
 
 cv::Mat imageSensor = cv::imread("img/Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat imageSimu = cv::Mat::zeros(512, 1024, CV_8UC3 );
-cv::Mat imageTot = cv::Mat::zeros(980, 1180, CV_8UC3 );
+cv::Mat imageTot = cv::Mat::zeros(950, 1180, CV_8UC3 );
 cv::Mat playButton = cv::imread("img/PlayButton.png",CV_LOAD_IMAGE_COLOR);
+cv::Mat playButton_Down = cv::imread("img/PlayButton_Down.png",CV_LOAD_IMAGE_COLOR);
+cv::Mat playButton_On = cv::imread("img/PlayButton_On.png",CV_LOAD_IMAGE_COLOR);
 cv::Mat pauseButton = cv::imread("img/PauseButton.png",CV_LOAD_IMAGE_COLOR);
+cv::Mat pauseButton_Down = cv::imread("img/PauseButton_Down.png",CV_LOAD_IMAGE_COLOR);
+cv::Mat pauseButton_On = cv::imread("img/PauseButton_On.png",CV_LOAD_IMAGE_COLOR);
 
 simulation::Msg_StopControl StopControl;
 simulation::Msg_SwitchControl SwitchControl;
@@ -54,10 +58,13 @@ ros::ServiceClient client_simRosStartSimulation,client_simRosPauseSimulation;
 
 ros::Publisher VREPSwitchControllerRight, VREPSwitchControllerLeft, VREPSwitchControllerLock,  VREPStopController, VREPGoController;
 
+int mode = 0;
+
 void updateUI()
 {
-	imageSimu.copyTo(imageTot.rowRange(70,582).colRange(78,1102));
-  imageSensor.copyTo(imageTot.rowRange(600,966).colRange(78,1102));
+	imageSimu.copyTo(imageTot.rowRange(18,530).colRange(78,1102));
+  imageSensor.copyTo(imageTot.rowRange(570,936).colRange(78,1102));
+			
   cv::imshow("Simulation", imageTot);
 }
 
@@ -88,13 +95,33 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 }
 void onMouse( int event, int x, int y, int, void* )
 {
-	static vrep_common::simRosStartSimulation srv_StartSimulation;		
-	static vrep_common::simRosPauseSimulation srv_PauseSimulation;	
 
-  if( event != cv::EVENT_LBUTTONDOWN ) return;
-	else if(y>25 && y < 82){
-    if(x>364 && x<537) 	client_simRosStartSimulation.call(srv_StartSimulation);
-    else if(x>564 && x<737) client_simRosPauseSimulation.call(srv_PauseSimulation);
+	static vrep_common::simRosStartSimulation srv_StartSimulation;		
+	static vrep_common::simRosPauseSimulation srv_PauseSimulation;
+
+	switch(event) {
+		case cv::EVENT_LBUTTONDOWN :
+   			if(y>545 && y < 570 && x>453 && x<563 && mode!= 1) {
+					playButton_Down.copyTo(imageTot.rowRange(545,570).colRange(453,563));
+					pauseButton.copyTo(imageTot.rowRange(545,570).colRange(617,727));
+					client_simRosStartSimulation.call(srv_StartSimulation);
+					mode = 1; }
+    		else if(y>545 && y < 570 && x>617 && x<727 && mode !=0) {
+					playButton.copyTo(imageTot.rowRange(545,570).colRange(453,563));
+					pauseButton_Down.copyTo(imageTot.rowRange(545,570).colRange(617,727));
+					client_simRosPauseSimulation.call(srv_PauseSimulation);
+					mode = 0; }
+		break;
+		case cv::EVENT_MOUSEMOVE :
+   			if(y>545 && y < 570 && x>453 && x<563 && mode!= 1)
+					playButton_On.copyTo(imageTot.rowRange(545,570).colRange(453,563));
+				else if (mode!= 1)
+					playButton.copyTo(imageTot.rowRange(545,570).colRange(453,563));
+    		if(y>545 && y < 570 && x>617 && x<727 && mode !=0)
+					pauseButton_On.copyTo(imageTot.rowRange(545,570).colRange(617,727));
+				else if (mode!= 0)
+					pauseButton.copyTo(imageTot.rowRange(545,570).colRange(617,727));
+		break;
 	}
 }
 
@@ -276,8 +303,9 @@ int main(int argc, char **argv)
 			  ros::NodeHandle nh;
 
 			  imageTot.setTo(cv::Scalar(200,200,200));
-			  playButton.copyTo(imageTot.rowRange(10,67).colRange(364,537));
-			  pauseButton.copyTo(imageTot.rowRange(10,67).colRange(564,737));
+			  rectangle(imageTot, cv::Point(75,15), cv::Point(1105,533),cv::Scalar(100,100,100),2);
+			  playButton.copyTo(imageTot.rowRange(545,570).colRange(453,563));
+			  pauseButton_Down.copyTo(imageTot.rowRange(545,570).colRange(617,727));
 
 			  client_simRosStartSimulation = nh.serviceClient<vrep_common::simRosStartSimulation>("/vrep/simRosStartSimulation");	
 			  client_simRosPauseSimulation = nh.serviceClient<vrep_common::simRosPauseSimulation>("/vrep/simRosPauseSimulation");	
