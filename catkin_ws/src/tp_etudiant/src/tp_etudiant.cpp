@@ -42,9 +42,6 @@ int main(int argc, char **argv)
 ///////////////////////////////////////////
 	while (ros::ok())
 	{
-		switch(jeton_d)
-		{
-
 		///////////////////////////////////
 		//////////// Coder ICI ////////////
 		///////////////////////////////////
@@ -54,6 +51,8 @@ int main(int argc, char **argv)
 ///////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////Exemple partie droite/////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
+		switch(jeton_d)
+		{
 			case 1 :
 				if (SensorSt.PS[6] == 1) {
 					stopSt.stop(7); 							
@@ -64,7 +63,7 @@ int main(int argc, char **argv)
 				if (SensorSt.CP[4] == 1){
 					stopSt.go(7); 	
 					stopSt.stop(8); 
-					switchSt.unlockSwitch(5); 
+					//switchSt.unlockSwitch(5); 
 					switchSt.turnLeft(5);
 					stopSt.stop(12); 
 					switchSt.unlockSwitch(6); 
