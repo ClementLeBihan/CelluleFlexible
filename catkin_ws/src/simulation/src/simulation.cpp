@@ -247,11 +247,11 @@ void StateStopCallBack(const simulation::Msg_StopControl::ConstPtr&  msg)
 	int StopControlInt(0), GoControlInt(0);
 	std_msgs::Int32 Stop, Go;
 
-	StopControl.ST = msg->ST;
+	StopControl.STOP = msg->STOP;
 	StopControl.GO = msg->GO;
 
 	for (int i=1;i<=24;i++){
-		if (msg->ST[i]==true)
+		if (msg->STOP[i]==true)
 			StopControlInt+=pow(2,i-1);
 		if (msg->GO[i]==true)
 			GoControlInt+=pow(2,i-1);

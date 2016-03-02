@@ -1,38 +1,41 @@
 #include "stopState.h"
-#include <std_msgs/Int32.h>
 #include <simulation/Msg_StopControl.h>
+//Msg_StopControl est un message qui comprend 2 mots de 32 bits STOP et GO, dont les 24 premiers bits sont significatifs et indiquent si ils sont actifs (1) ou non (0)
 #include <ros/ros.h>
 
-#include <math.h> // pow(2,4) = 2⁴
-
-// Used API services:
-#include "vrep_common/simRosEnablePublisher.h"
-#include "vrep_common/simRosEnableSubscriber.h"
 
 stopState::stopState () {
-	for(int i=1;i<=24;i++) stateStop.ST[i] = 0;
+// Constructeur de la classe, et initialise tous les points d'arrêts en mode continu. 
+	for(int i=1;i<=24;i++) stateStop.STOP[i] = 0;
 	for(int i=1;i<=24;i++) stateStop.GO[i] = 1;
 }
 
 void stopState::stop(int numStop)
+//fonction qui met le point d'arret "numStop" en mode stop
 {
-	stateStop.ST[numStop] = 1;
+	stateStop.STOP[numStop] = 1;
 	stateStop.GO[numStop] = 0;
-	publish();
+	publish(); // appelle la fonction publish definie plus bas
 }
 
 void stopState::go(int numStop)
+//fonction qui met le point d'arret "numStop" en mode continu
 {
-	stateStop.ST[numStop] = 0;
+	stateStop.STOP[numStop] = 0;
 	stateStop.GO[numStop] = 1;
-	publish();
+	publish(); // appelle la fonction publish definie plus bas
 }
 void stopState::publish()
+//fonction qui, lorsqu'elle est appelée, publie dans le canal de communication entre la couche basse et la couche haute les états voulus de Tous les points d'arrêts
 {
 	stopStatePublisher.publish(stateStop);
 }
 
 void stopState::init(ros::NodeHandle n)
+// créé le canal de communication 'TPStopControl' entre la couche haute et la couche basse
 {
 	stopStatePublisher = n.advertise<simulation::Msg_StopControl>("/tp_etudiant/TPStopControl", 1);
 }
+
+
+////// A chaque fois que l'utilisateur modifie un point d'arret (en stop ou en continu), leurs états sont automatiquement publiés et envoyés à la simulation.
