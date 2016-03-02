@@ -6,7 +6,7 @@
 #include <termios.h>
 #include <sstream>
 #include <stdint.h>
-#include "capteurState.h"
+#include "sensorState.h"
 #include "switchState.h"
 #include "stopState.h"
 #include <ros/ros.h>
@@ -16,8 +16,8 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "tp_etudiant");
 	ros::NodeHandle nh;
 
-	capteurState CapteurSt;
-	CapteurSt.init(nh);
+	sensorState SensorSt;
+	SensorSt.init(nh);
 
 	switchState switchSt;
 	switchSt.init(nh);
@@ -48,13 +48,13 @@ int main(int argc, char **argv)
 
 
 			case 1 :
-				if (CapteurSt.PS[6] == 1) {
+				if (SensorSt.PS[6] == 1) {
 					stopSt.stop(7); 							
 					jeton_d++;	}
 				break;
 
 			case 2 :			
-				if (CapteurSt.CP[4] == 1){
+				if (SensorSt.CP[4] == 1){
 					stopSt.go(7); 	
 					stopSt.stop(8); 
 					switchSt.unlockSwitch(5); 
@@ -68,13 +68,13 @@ int main(int argc, char **argv)
 				break;
 
 			case 3 :
-				if (CapteurSt.DG[5] == 1){
+				if (SensorSt.DG[5] == 1){
 					stopSt.go(8);
 					jeton_d++;	}
 				break;
 
 			case 4 :
-				if(CapteurSt.PS[9]==1){
+				if(SensorSt.PS[9]==1){
 					switchSt.unlockSwitch(6); 		
 					switchSt.turnRight(6);	
 					switchSt.lockSwitch(6);
@@ -82,14 +82,14 @@ int main(int argc, char **argv)
 			break;
 
 			case 5:
-				if (CapteurSt.DD[6] == 1){
+				if (SensorSt.DD[6] == 1){
 					stopSt.go(12); 	
 					stopSt.stop(13);
 					jeton_d++;	}
 			break;
 		
 			case 6:
-				if (CapteurSt.CP[6] == 1){	
+				if (SensorSt.CP[6] == 1){	
 					stopSt.stop(17);
 					switchSt.unlockSwitch(7); 
 					switchSt.turnLeft(7);	
@@ -101,13 +101,13 @@ int main(int argc, char **argv)
 				break;
 			
 			case 7:
-				if (CapteurSt.DG[7] == 1){
+				if (SensorSt.DG[7] == 1){
 					stopSt.go(13);
 					jeton_d++;	}
 				break;
 
 			case 8:
-				if (CapteurSt.PS[12] == 1){	
+				if (SensorSt.PS[12] == 1){	
 					switchSt.unlockSwitch(8); 
 					switchSt.turnRight(8);	
 					switchSt.lockSwitch(8); 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 				break;
 
 			case 9:
-				if (CapteurSt.DD[8] == 1){
+				if (SensorSt.DD[8] == 1){
 					stopSt.go(17); 	
 					jeton_d++;	}
 				break;
@@ -125,13 +125,13 @@ int main(int argc, char **argv)
 		switch(jeton_g)
 		{
 			case 1:
-				if (CapteurSt.PS[14] == 1){	
+				if (SensorSt.PS[14] == 1){	
 					stopSt.stop(19);
 					jeton_g++;	}
 			break;
 			
 			case 2:
-				if (CapteurSt.CP[9] == 1){
+				if (SensorSt.CP[9] == 1){
 					stopSt.go(19);	
 					stopSt.stop(20);
 					stopSt.stop(22);
@@ -139,20 +139,20 @@ int main(int argc, char **argv)
 			break;
 
 			case 3:
-				if (CapteurSt.CPI[8] == 1){
+				if (SensorSt.CPI[8] == 1){
 					stopSt.stop(21);			
 					stopSt.go(20);
 					jeton_g++;	}
 			break;
 
 			case 4:
-				if (CapteurSt.CP[9] == 1){
+				if (SensorSt.CP[9] == 1){
 					stopSt.go(22);
 					jeton_g++;	}
 				break;
 
 			case 5 :
-				if (CapteurSt.CP[1] == 1){
+				if (SensorSt.CP[1] == 1){
 					stopSt.go(21);
 					stopSt.stop(3);								
 					switchSt.unlockSwitch(1); 
@@ -165,14 +165,14 @@ int main(int argc, char **argv)
 				break;
 
 			case 6 :
-				if (CapteurSt.PS[2] == 1){	
+				if (SensorSt.PS[2] == 1){	
 					stopSt.go(3);	
 					stopSt.stop(5);
 					jeton_g++;	}
 				break;
 
 			case 7 :
-				if (CapteurSt.PS[4] == 1){	
+				if (SensorSt.PS[4] == 1){	
 					switchSt.unlockSwitch(2); 
 					switchSt.turnRight(2);	
 					switchSt.lockSwitch(2);
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 				break;
 
 				case 8:
-					if (CapteurSt.DD[2] == 1){	
+					if (SensorSt.DD[2] == 1){	
 						stopSt.go(5);					
 						jeton_g++;	}
 					break;
