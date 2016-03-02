@@ -15,6 +15,6 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 set(EXECUTABLE_OUTPUT_PATH ~/Projet_Long)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-add_executable(tp_etudiant src/tp_etudiant.cpp src/capteurState.cpp src/switchState.cpp src/stopState.cpp) 
+add_executable(tp_etudiant src/tp_etudiant.cpp src/sensorState.cpp src/switchState.cpp src/stopState.cpp) 
 target_link_libraries(tp_etudiant ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(tp_etudiant vrep_common_generate_messages_cpp)
