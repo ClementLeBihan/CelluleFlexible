@@ -1,14 +1,13 @@
 #include "sensorState.h"
-#include <std_msgs/Int32.h>
 #include <ros/ros.h>
 
-// Used API services:
-#include "vrep_common/simRosEnablePublisher.h"
-#include "vrep_common/simRosEnableSubscriber.h"
-
 #include <simulation/Msg_SensorState.h>
+//Msg_SensorState est un message qui comprend 5 mots de 32 bits PS[i], CP[i], CPI[i], DG[i] et DD[i] qui indiquent si le capteur i est actif (1) ou non (0).
+
+
 
 void sensorState::SensorCallback(const simulation::Msg_SensorState::ConstPtr& msg)
+// cette fonction est appellée en boucle et met à jour les états de tous les capteurs 
 {
 	for(int i=1;i<=16;i++) PS[i] = msg->PS[i];
 	for(int i=1;i<=10;i++) CP[i] = msg->CP[i];
@@ -18,6 +17,7 @@ void sensorState::SensorCallback(const simulation::Msg_SensorState::ConstPtr& ms
 }
 
 sensorState::sensorState () {
+// Constructeur de la classe, il créé les places pour tous les capteurs. 
 	for(int i=1;i<=16;i++) PS[i] = 0;
 	for(int i=1;i<=10;i++) CP[i] = 0;
 	for(int i=1;i<=8;i++) CPI[i] = 0;
@@ -25,6 +25,7 @@ sensorState::sensorState () {
 	for(int i=1;i<=12;i++) DD[i] = 0;
 }
 void sensorState::init(ros::NodeHandle n)
+// Fonction qui s'abonne au canal qui donne les états des capteurs venant de la couche basse.
 {
 	subSensorState = n.subscribe("/simulation/SensorState", 1, &sensorState::SensorCallback,this);
 }
