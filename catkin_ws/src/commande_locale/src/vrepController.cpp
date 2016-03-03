@@ -33,7 +33,7 @@ void vrepController::close()
 }
 void vrepController::init(ros::NodeHandle n)
 {
-	system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
+	system("cd V-Rep/ &&(./vrep.sh -h ../Simulation.ttt &) && cd .."); // On execute VREP sans afficher la fenetre
 	sleep(2);
 	client_simRosLoadModel = n.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");
 	client_simRosStartSimulation = n.serviceClient<vrep_common::simRosStartSimulation>("/vrep/simRosStartSimulation");	

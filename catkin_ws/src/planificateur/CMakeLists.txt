@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.8.3)
 project(planificateur)
 
@@ -8,8 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
 	std_msgs 
 	genmsg 
 	message_generation)
-find_package(OpenCV)
-
 include_directories(${catkin_INCLUDE_DIRS})
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 set(EXECUTABLE_OUTPUT_PATH ../../../)
