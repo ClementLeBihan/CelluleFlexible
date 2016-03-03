@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #include "capteurState.h"
 #include <std_msgs/Int32.h>
 #include <ros/ros.h>

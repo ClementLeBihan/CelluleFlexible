@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #include "stopState.h"
 #include <commande_locale/Msg_StopControl.h>
 //Msg_StopControl est un message qui comprend 2 mots de 32 bits STOP et GO, dont les 24 premiers bits sont significatifs et indiquent si ils sont actifs (1) ou non (0)
