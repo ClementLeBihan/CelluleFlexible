@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sstream>
-#include <signal.h>
-#include <termios.h>
-#include <sstream>
-#include <stdint.h>
 #include "sensorState.h"
 #include "switchState.h"
 #include "stopState.h"

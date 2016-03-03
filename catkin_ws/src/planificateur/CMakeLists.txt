@@ -12,7 +12,7 @@ find_package(OpenCV)
 
 include_directories(${catkin_INCLUDE_DIRS})
 include_directories(include ${OpenCV_INCLUDE_DIRS})
-set(EXECUTABLE_OUTPUT_PATH ~/Projet_Long)
+set(EXECUTABLE_OUTPUT_PATH ../../../)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 add_executable(planificateur src/planificateur.cpp src/sensorState.cpp src/switchState.cpp src/stopState.cpp) 
