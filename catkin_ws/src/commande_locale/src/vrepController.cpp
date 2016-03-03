@@ -8,12 +8,12 @@
 
 void vrepController::pause()
 {
-	system("rosservice call /vrep/simRosPauseSimulation > /dev/null");
+	client_simRosPauseSimulation.call(srv_PauseSimulation);
 }
 
 void vrepController::play()
 {
-	system("rosservice call /vrep/simRosStartSimulation > /dev/null");				
+	client_simRosStartSimulation.call(srv_StartSimulation);				
 }
 
 void vrepController::loadModel(char shuttleNumber)
@@ -35,5 +35,7 @@ void vrepController::init(ros::NodeHandle n)
 {
 	system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
 	sleep(2);
-	client_simRosLoadModel = n.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");	
+	client_simRosLoadModel = n.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");
+	client_simRosStartSimulation = n.serviceClient<vrep_common::simRosStartSimulation>("/vrep/simRosStartSimulation");	
+	client_simRosPauseSimulation = n.serviceClient<vrep_common::simRosPauseSimulation>("/vrep/simRosPauseSimulation");	
 }

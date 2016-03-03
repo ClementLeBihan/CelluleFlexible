@@ -1,4 +1,5 @@
 #include "UI.h"
+#include "vrepController.h"
 
 // Image Streaming
 #include <image_transport/image_transport.h>
@@ -6,10 +7,12 @@
 #include "opencv2/highgui/highgui.hpp"
 #include <cv_bridge/cv_bridge.h>
 
-#include "vrep_common/simRosPauseSimulation.h"
-#include "vrep_common/simRosStartSimulation.h"
-
 #include <commande_locale/Msg_SensorState.h>
+
+UI::UI(vrepController* VREPContrl)
+{
+	VREPController = VREPContrl;
+}
 void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(21, 241), 17, cv::Scalar(200,200,200), -1); //A01
@@ -127,12 +130,12 @@ void UI::onMouse_internal( int event, int x, int y)
    			if(y>545 && y < 570 && x>453 && x<563 && mode!= 1) {
 					playButton_Down.copyTo(imageTot.rowRange(545,570).colRange(453,563));
 					pauseButton.copyTo(imageTot.rowRange(545,570).colRange(617,727));
-					client_simRosStartSimulation.call(srv_StartSimulation);
+					VREPController->play();
 					mode = 1; }
     		else if(y>545 && y < 570 && x>617 && x<727 && mode !=0) {
 					playButton.copyTo(imageTot.rowRange(545,570).colRange(453,563));
 					pauseButton_Down.copyTo(imageTot.rowRange(545,570).colRange(617,727));
-					client_simRosPauseSimulation.call(srv_PauseSimulation);
+					VREPController->pause();
 					mode = 0; }
 		break;
 		case cv::EVENT_MOUSEMOVE :
@@ -174,10 +177,6 @@ void UI::init(ros::NodeHandle nh){
 	// Subscribe
 	image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("vrep/VisionSensorData", 1, &UI::getSimuStream, this);
-
-	// Services Start Pause
-	client_simRosStartSimulation = nh.serviceClient<vrep_common::simRosStartSimulation>("/vrep/simRosStartSimulation");	
-	client_simRosPauseSimulation = nh.serviceClient<vrep_common::simRosPauseSimulation>("/vrep/simRosPauseSimulation");	
 
 	mode = 0;
 }

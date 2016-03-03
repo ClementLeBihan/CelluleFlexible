@@ -10,10 +10,13 @@
 #include <cv_bridge/cv_bridge.h>
 
 #include <commande_locale/Msg_SensorState.h>
+#include "vrepController.h"
 
 class UI
 {
 	private:
+		vrepController* VREPController;
+
 		cv::Mat imageSensor;
 		cv::Mat imageSimu;
 		cv::Mat imageTot;
@@ -23,13 +26,12 @@ class UI
 		cv::Mat pauseButton;
 		cv::Mat pauseButton_Down;
 		cv::Mat pauseButton_On;
+
 		int mode;
 
 		image_transport::Subscriber subImage;
-
-		ros::ServiceClient client_simRosStartSimulation;
-		ros::ServiceClient client_simRosPauseSimulation; 
 	public:
+		UI(vrepController* VREPContrl);
 		void DrawRailSensorImg(commande_locale::Msg_SensorState SensorState);
 		void DrawStationSensorImg(commande_locale::Msg_SensorState SensorState);
 		void DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState);

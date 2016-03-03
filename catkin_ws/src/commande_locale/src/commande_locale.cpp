@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 			VREPController.init(nh);
 
 			// USER INTERFACE
-			UI userInterface;
+			UI userInterface(&VREPController);
 			userInterface.init(nh);
 
 			// IN & OUT CONTROLLER
