@@ -1,5 +1,5 @@
 #include "stopState.h"
-#include <commandeLocale/Msg_StopControl.h>
+#include <commande_locale/Msg_StopControl.h>
 //Msg_StopControl est un message qui comprend 2 mots de 32 bits STOP et GO, dont les 24 premiers bits sont significatifs et indiquent si ils sont actifs (1) ou non (0)
 #include <ros/ros.h>
 
@@ -34,8 +34,8 @@ void stopState::publish()
 void stopState::init(ros::NodeHandle n)
 // créé le canal de communication 'planifStopControl' entre la couche haute et la couche basse
 {
-	stopStatePublisher = n.advertise<commandeLocale::Msg_StopControl>("/planificateur/planifStopControl", 1);
+	stopStatePublisher = n.advertise<commande_locale::Msg_StopControl>("/planificateur/planifStopControl", 1);
 }
 
 
-////// A chaque fois que l'utilisateur modifie un point d'arret (en stop ou en continu), leurs états sont automatiquement publiés et envoyés à la commandeLocale.
+////// A chaque fois que l'utilisateur modifie un point d'arret (en stop ou en continu), leurs états sont automatiquement publiés et envoyés à la commande_locale.

@@ -6,9 +6,9 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-#include <commandeLocale/Msg_SensorState.h>
+#include <commande_locale/Msg_SensorState.h>
 
-void capteurState::SensorCallback(const commandeLocale::Msg_SensorState::ConstPtr& msg)
+void capteurState::SensorCallback(const commande_locale::Msg_SensorState::ConstPtr& msg)
 {
 	for(int i=1;i<=16;i++) PS[i] = msg->PS[i];
 	for(int i=1;i<=10;i++) CP[i] = msg->CP[i];
@@ -26,5 +26,5 @@ capteurState::capteurState () {
 }
 void capteurState::init(ros::NodeHandle n)
 {
-	subSensorState = n.subscribe("/commandeLocale/SensorState", 1, &capteurState::SensorCallback,this);
+	subSensorState = n.subscribe("/commande_locale/SensorState", 1, &capteurState::SensorCallback,this);
 }

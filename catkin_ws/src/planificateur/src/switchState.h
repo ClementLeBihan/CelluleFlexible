@@ -1,13 +1,13 @@
 #ifndef SWITCH_STATE
 #define SWITCH_STATE
 #include <ros/ros.h>
-#include "commandeLocale/Msg_SwitchControl.h"
+#include "commande_locale/Msg_SwitchControl.h"
 
 class switchState
 {
 private:
 	ros::Publisher switchStatePublisher;
-	commandeLocale::Msg_SwitchControl stateSwitches;
+	commande_locale::Msg_SwitchControl stateSwitches;
 public:
 
 	switchState ();

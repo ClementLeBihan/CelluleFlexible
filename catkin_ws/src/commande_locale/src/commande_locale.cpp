@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sstream>
-#include <string>
-
 using namespace std;
 
 #include "vrepController.h"
@@ -17,7 +11,7 @@ using namespace std;
 int main(int argc, char **argv)
 {
 			//Initialisation du noeud ROS
-			ros::init(argc, argv, "simulation");
+			ros::init(argc, argv, "commande_locale");
 			ros::NodeHandle nh;
 
 			// VREP CONTROLLER 
@@ -34,9 +28,9 @@ int main(int argc, char **argv)
 
 			for(int i=1;i<=argc-1;i++) VREPController.loadModel(argv[i][0]); 
 
-			// Demarrage de la simulation pour avoir la premiere image
+			// Demarrage de la commande_locale pour avoir la premiere image
 			VREPController.play();
-			// Pause pour laisser à l'utilisateur le soin de Commencer la simulation
+			// Pause pour laisser à l'utilisateur le soin de Commencer la commande_locale
 			VREPController.pause();
 
 			while (ros::ok())

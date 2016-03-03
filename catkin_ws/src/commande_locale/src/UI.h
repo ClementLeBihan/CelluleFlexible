@@ -9,7 +9,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include <cv_bridge/cv_bridge.h>
 
-#include <simulation/Msg_SensorState.h>
+#include <commande_locale/Msg_SensorState.h>
 
 class UI
 {
@@ -30,9 +30,9 @@ class UI
 		ros::ServiceClient client_simRosStartSimulation;
 		ros::ServiceClient client_simRosPauseSimulation; 
 	public:
-		void DrawRailSensorImg(simulation::Msg_SensorState SensorState);
-		void DrawStationSensorImg(simulation::Msg_SensorState SensorState);
-		void DrawSwitchSensorImg(simulation::Msg_SensorState SensorState);
+		void DrawRailSensorImg(commande_locale::Msg_SensorState SensorState);
+		void DrawStationSensorImg(commande_locale::Msg_SensorState SensorState);
+		void DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState);
 		void init(ros::NodeHandle nh);
 		void update();
 		void getSimuStream(const sensor_msgs::ImageConstPtr& msg);

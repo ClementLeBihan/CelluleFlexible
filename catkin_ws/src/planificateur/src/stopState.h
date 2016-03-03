@@ -1,13 +1,13 @@
 #ifndef STOP_STATE
 #define STOP_STATE
 #include <ros/ros.h>
-#include "commandeLocale/Msg_StopControl.h"
+#include "commande_locale/Msg_StopControl.h"
 
 class stopState
 {
 private:
 	ros::Publisher stopStatePublisher;
-	commandeLocale::Msg_StopControl stateStop;
+	commande_locale::Msg_StopControl stateStop;
 public:
 
 	stopState ();

@@ -9,8 +9,8 @@
 #include "vrep_common/simRosPauseSimulation.h"
 #include "vrep_common/simRosStartSimulation.h"
 
-#include <simulation/Msg_SensorState.h>
-void UI::DrawSwitchSensorImg(simulation::Msg_SensorState SensorState)
+#include <commande_locale/Msg_SensorState.h>
+void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(21, 241), 17, cv::Scalar(200,200,200), -1); //A01
 	circle(imageSensor, cv::Point(270, 252), 17, cv::Scalar(200,200,200), -1); //A02
@@ -52,7 +52,7 @@ void UI::DrawSwitchSensorImg(simulation::Msg_SensorState SensorState)
 
 	update();
 }
-void UI::DrawStationSensorImg(simulation::Msg_SensorState SensorState)
+void UI::DrawStationSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(100, 346), 5, cv::Scalar(0,255*SensorState.CPI[1],255-255*SensorState.CPI[1]), -1, 8 );
 	circle(imageSensor, cv::Point(185, 346), 5, cv::Scalar(0,255*SensorState.CPI[2],255-255*SensorState.CPI[2]), -1, 8 );
@@ -65,7 +65,7 @@ void UI::DrawStationSensorImg(simulation::Msg_SensorState SensorState)
 
 	update();
 }
-void UI::DrawRailSensorImg(simulation::Msg_SensorState SensorState)
+void UI::DrawRailSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(45, 349), 5, cv::Scalar(0,255*SensorState.CP[1],255-255*SensorState.CP[1]), -1, 8 );
 	circle(imageSensor, cv::Point(122, 231), 5, cv::Scalar(0,255*SensorState.CP[2],255-255*SensorState.CP[2]), -1, 8 );
@@ -102,7 +102,7 @@ void UI::update()
 	imageSimu.copyTo(imageTot.rowRange(18,530).colRange(78,1102));
  	imageSensor.copyTo(imageTot.rowRange(570,936).colRange(78,1102));
 			
- 	cv::imshow("Simulation", imageTot);
+ 	cv::imshow("commande_locale", imageTot);
 }
 
 void UI::getSimuStream(const sensor_msgs::ImageConstPtr& msg)
@@ -167,10 +167,10 @@ void UI::init(ros::NodeHandle nh){
 	pauseButton_Down.copyTo(imageTot.rowRange(545,570).colRange(617,727));
 
 	// Window
-		cv::namedWindow("Simulation");
+		cv::namedWindow("commande_locale");
 		cv::startWindowThread();
-		cv::moveWindow("Simulation",0,0);
-		cv::setMouseCallback("Simulation", onMouse,this);
+		cv::moveWindow("commande_locale",0,0);
+		cv::setMouseCallback("commande_locale", onMouse,this);
 	// Subscribe
 	image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("vrep/VisionSensorData", 1, &UI::getSimuStream, this);

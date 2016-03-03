@@ -7,9 +7,9 @@
 #include "vrep_common/simRosEnablePublisher.h"
 #include "vrep_common/simRosEnableSubscriber.h"
 
-#include <commandeLocale/Msg_SwitchControl.h>
-#include <commandeLocale/Msg_StopControl.h>
-#include <commandeLocale/Msg_SensorState.h>
+#include <commande_locale/Msg_SwitchControl.h>
+#include <commande_locale/Msg_StopControl.h>
+#include <commande_locale/Msg_SensorState.h>
 
 inOutController::inOutController(UI* usrInt)
 {
@@ -41,7 +41,7 @@ void inOutController::SensorCallbackStation(const std_msgs::Int32::ConstPtr& msg
 	planifRailSensorState.publish(SensorState);
 }
 
-void inOutController::StateSwitchCallBack(const commandeLocale::Msg_SwitchControl::ConstPtr&  msg)
+void inOutController::StateSwitchCallBack(const commande_locale::Msg_SwitchControl::ConstPtr&  msg)
 {
 	int SwitchRightControl(0), SwitchLeftControl(0), SwitchLockControl(0);
 	std_msgs::Int32 Right, Left, Lock;
@@ -67,7 +67,7 @@ void inOutController::StateSwitchCallBack(const commandeLocale::Msg_SwitchContro
 	VREPSwitchControllerLock.publish(Lock);
 }
 
-void inOutController::StateStopCallBack(const commandeLocale::Msg_StopControl::ConstPtr&  msg)
+void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg)
 {
 	int StopControlInt(0), GoControlInt(0);
 	std_msgs::Int32 Stop, Go;
@@ -98,10 +98,10 @@ void inOutController::init(ros::NodeHandle nh)
 	planifSubStopState = nh.subscribe("planificateur/planifStopControl", 1, &inOutController::StateStopCallBack, this);
 
 	// Publishers
-	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/commandeLocale/SwitchControllerRight", 1);
-	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/commandeLocale/SwitchControllerLeft", 1);
-	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/commandeLocale/SwitchControllerLock", 1);
-	VREPStopController = nh.advertise<std_msgs::Int32>("/commandeLocale/StopController", 1);
-	VREPGoController = nh.advertise<std_msgs::Int32>("/commandeLocale/GoController", 1);
-	planifRailSensorState = nh.advertise<commandeLocale::Msg_SensorState>("/commandeLocale/SensorState", 1);
+	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerRight", 1);
+	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLeft", 1);
+	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLock", 1);
+	VREPStopController = nh.advertise<std_msgs::Int32>("/commande_locale/StopController", 1);
+	VREPGoController = nh.advertise<std_msgs::Int32>("/commande_locale/GoController", 1);
+	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande_locale/SensorState", 1);
 }

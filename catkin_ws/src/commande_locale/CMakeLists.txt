@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(commandeLocale)
+project(commande_locale)
 
 find_package(catkin REQUIRED)
 find_package(catkin REQUIRED COMPONENTS 
@@ -17,9 +17,9 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 set(EXECUTABLE_OUTPUT_PATH ~/Projet_Long)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-add_executable(commandeLocale src/simulation.cpp src/UI.cpp src/inOutController.cpp src/vrepController.cpp) 
-target_link_libraries(commandeLocale ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(commandeLocale vrep_common_generate_messages_cpp)
+add_executable(commande_locale src/commande_locale.cpp src/UI.cpp src/inOutController.cpp src/vrepController.cpp) 
+target_link_libraries(commande_locale ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(commande_locale vrep_common_generate_messages_cpp)
 add_message_files(
 	FILES
 	Msg_SensorState.msg

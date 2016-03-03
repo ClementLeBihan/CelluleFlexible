@@ -1,7 +1,7 @@
 #ifndef CAPTEUR_STATE
 #define CAPTEUR_STATE
 
-#include <commandeLocale/Msg_SensorState.h>
+#include <commande_locale/Msg_SensorState.h>
 #include <ros/ros.h>
 
 class capteurState
@@ -12,7 +12,7 @@ public:
 	int PS[17],CPI[9],CP[11], DD[13], DG[13];
 	capteurState ();
 	void init(ros::NodeHandle n);
-	void SensorCallback(const commandeLocale::Msg_SensorState::ConstPtr& msg);
+	void SensorCallback(const commande_locale::Msg_SensorState::ConstPtr& msg);
 };
 
 #endif

@@ -1,6 +1,6 @@
 <package>
-  <name>simulation</name>
-  <description>simulation node</description>
+  <name>commande_locale</name>
+  <description>commande_locale node</description>
   <maintainer email="simon.demmer@etu.enseeiht.fr">Simon le Chef</maintainer>
   <version>3.1.2</version>
   <author>Simon le Chef</author>
