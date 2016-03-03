@@ -22,7 +22,7 @@ void vrepController::loadModel(char shuttleNumber)
 	else {		
 		if(shuttleNumber == 48) shuttleNumber = char(74); // SI 0 -> ShuttleZ
 		shuttleNumber = char(shuttleNumber+16);
-		std::string shuttleName = "/home/etudiant/Projet_Long/V-Rep/models/Projet_Long/shuttle"+std::string(&shuttleNumber)+".ttm";
+		std::string shuttleName = "models/montrac/shuttle"+std::string(&shuttleNumber)+".ttm";
 		srv_LoadModel.request.fileName = shuttleName;			
 		client_simRosLoadModel.call(srv_LoadModel);
 	}

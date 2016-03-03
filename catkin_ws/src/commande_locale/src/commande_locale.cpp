@@ -6,8 +6,6 @@ using namespace std;
 
 #include <ros/ros.h>
 
-
-
 int main(int argc, char **argv)
 {
 			//Initialisation du noeud ROS
