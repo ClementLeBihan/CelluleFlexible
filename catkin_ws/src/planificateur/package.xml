@@ -1,9 +1,9 @@
 <package>
   <name>planificateur</name>
   <description>planificateur node</description>
-  <maintainer email="simon.demmer@etu.enseeiht.fr">Simon le Chef</maintainer>
+  <maintainer email="simon.demmer@etu.enseeiht.fr">Simon Demmer</maintainer>
   <version>3.1.2</version>
-  <author>Simon le Chef</author>
+  <author>Emilie, Thibaut, Clement et Simon</author>
   <license>GPLv3</license>
   <url>http://www.fr</url>
   <buildtool_depend>catkin</buildtool_depend>
