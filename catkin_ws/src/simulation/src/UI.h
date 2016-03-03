@@ -38,7 +38,7 @@ class UI
 		void getSimuStream(const sensor_msgs::ImageConstPtr& msg);
 		void onMouse_internal( int event, int x, int y);
 		friend void onMouse(int event, int x, int y, int, void* userdata);
-		void kill();
+		void close();
 };
 
 #endif

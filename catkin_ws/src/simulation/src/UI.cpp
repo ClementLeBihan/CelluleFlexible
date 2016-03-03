@@ -182,7 +182,7 @@ void UI::init(ros::NodeHandle nh){
 	mode = 0;
 }
 
-void UI::kill(){
+void UI::close(){
 	cv::destroyWindow("view");
 }
 

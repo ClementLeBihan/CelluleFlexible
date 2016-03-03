@@ -2,9 +2,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sstream>
-#include <signal.h>
-#include <termios.h>
-#include <sstream>
 #include <string>
 
 using namespace std;
@@ -15,22 +12,25 @@ using namespace std;
 
 #include <ros/ros.h>
 
-vrepController VREPController;
+
 
 int main(int argc, char **argv)
 {
-    pid_t pid;
- 
-    if ((pid = fork()) < 0)
-        return EXIT_FAILURE;
-    else if (pid == 0) 
-		{
-			VREPController.launch();
+			//Initialisation du noeud ROS
+			ros::init(argc, argv, "simulation");
+			ros::NodeHandle nh;
 
-			ros::init(argc, argv, "simulation2");
-			ros::NodeHandle nh2;
-			
-			VREPController.init(nh2);
+			// VREP CONTROLLER 
+			vrepController VREPController;
+			VREPController.init(nh);
+
+			// USER INTERFACE
+			UI userInterface;
+			userInterface.init(nh);
+
+			// IN & OUT CONTROLLER
+			inOutController IOController(&userInterface);
+			IOController.init(nh);
 
 			for(int i=1;i<=argc-1;i++) VREPController.loadModel(argv[i][0]); 
 
@@ -38,29 +38,13 @@ int main(int argc, char **argv)
 			VREPController.play();
 			// Pause pour laisser à l'utilisateur le soin de Commencer la simulation
 			VREPController.pause();
-		}
-    else if (pid > 0) 
-		{
-
-			VREPController.waitVrep();
-
-			//Initialisation du noeud
-			ros::init(argc, argv, "simulation");
-			ros::NodeHandle nh;
-
-			UI userInterface;
-			userInterface.init(nh);
-
-			inOutController IOController(&userInterface);
-			IOController.init(nh);
 
 			while (ros::ok())
 			{
 				ros::spinOnce();
 			}				
 				
-			userInterface.kill();
+			userInterface.close();
 			VREPController.close();
 			return 0;
-		} 
 }

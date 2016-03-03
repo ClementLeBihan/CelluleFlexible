@@ -8,7 +8,6 @@ class vrepController
 	public:
 		void init(ros::NodeHandle n);
 		void close();
-		void launch();
 		void loadModel(char shuttleNumber);
 		void waitVrep();
 		void play();

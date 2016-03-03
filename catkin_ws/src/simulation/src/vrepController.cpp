@@ -16,12 +16,6 @@ void vrepController::play()
 	system("rosservice call /vrep/simRosStartSimulation > /dev/null");				
 }
 
-void vrepController::waitVrep()
-{
-	while(system("pidof -x vrep > /dev/null")) {} // Attente d'un process du nom de "vrep"
-	sleep(2);
-}
-
 void vrepController::loadModel(char shuttleNumber)
 {
 	if(shuttleNumber>54 || shuttleNumber<48) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 0 ET 6 \n");
@@ -33,18 +27,13 @@ void vrepController::loadModel(char shuttleNumber)
 		client_simRosLoadModel.call(srv_LoadModel);
 	}
 }
-
-void vrepController::launch()
-{
-	system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
-	sleep(2);
-}
-
 void vrepController::close()
 {
 	system("pkill vrep");
 }
 void vrepController::init(ros::NodeHandle n)
 {
+	system("~/Projet_Long/V-Rep/vrep.sh -h ~/Projet_Long/Simulation.ttt &");
+	sleep(2);
 	client_simRosLoadModel = n.serviceClient<vrep_common::simRosLoadModel>("/vrep/simRosLoadModel");	
 }
