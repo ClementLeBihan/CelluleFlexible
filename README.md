@@ -12,21 +12,20 @@
 
 1. **in ~/.bashrc, Add this lines :**
 	- source /opt/ros/jade/setup.bash
-	- export VREP_ROOT_DIR=~/Projet_Long/V-Rep/
-	- source ~/Projet_Long/catkin_ws/devel/setup.bash"]
+	- export VREP_ROOT_DIR=~/CelluleFlexible/V-Rep/
+	- source ~/CelluleFlexible/catkin_ws/devel/setup.bash"]
 
 2. **In /Projet_Long/catkin_ws**
 	- catkin_make
 
 3. **Don't forget to launch roscore before launching our application**
-	- ~/Projet_Long/simulation 1 2 5 6
-	- ~/Projet_Long/tp_etudiant
+	- ~/CelluleFlexible/simulation 1 2 5 6
+	- ~/CelluleFlexible/planification
 
 ## MORE INFOS
 
 **If you want to see our simulation.ttt :**
-   - Execute ~/Projet_Long/V-Rep/vrep.sh
-   - Then open Simulation.ttt
+   - Execute ~/CelluleFlexible/V-Rep/vrep.sh ~/CelluleFlexible/Simulation.ttt
 
 ## License
 
