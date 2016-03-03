@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #ifndef IN_OUT_CONTROLLER
 #define IN_OUT_CONTROLLER
 

@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #include "vrepController.h"
 #include "vrep_common/simRosPauseSimulation.h"
 #include "vrep_common/simRosStartSimulation.h"

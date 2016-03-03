@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #ifndef VREP_CONTROLLER
 #define VREP_CONTROLLER
 

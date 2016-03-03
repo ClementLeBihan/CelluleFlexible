@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 using namespace std;
 
 #include "vrepController.h"

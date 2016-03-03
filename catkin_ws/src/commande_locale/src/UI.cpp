@@ -1,3 +1,11 @@
+/*
+ * ********************************* *
+ * Copyright 2016, STEC Projet Long. *
+ * All rights reserved.  	     *
+ * ********************************* *
+*/
+
+
 #include "UI.h"
 #include "vrepController.h"
 
