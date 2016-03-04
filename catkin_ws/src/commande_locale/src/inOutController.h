@@ -40,9 +40,11 @@ private:
 public:
 	inOutController(UI* usrInt);
 	void init(ros::NodeHandle nh);
+	// Sensors
 	void SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg);
 	void SensorCallbackSwitch(const std_msgs::Int32::ConstPtr& msg);
 	void SensorCallbackStation(const std_msgs::Int32::ConstPtr& msg);
+	// Actuators
 	void StateSwitchCallBack(const commande_locale::Msg_SwitchControl::ConstPtr&  msg);
 	void StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg);
 };

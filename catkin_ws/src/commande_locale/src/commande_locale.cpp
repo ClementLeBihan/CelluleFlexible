@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 			ros::init(argc, argv, "commande_locale");
 			ros::NodeHandle nh;
 
-			// VREP CONTROLLER 
+			// VREP CONTROLLER
 			vrepController VREPController;
 			VREPController.init(nh);
 
@@ -32,19 +32,21 @@ int main(int argc, char **argv)
 			inOutController IOController(&userInterface);
 			IOController.init(nh);
 
-			for(int i=1;i<=argc-1;i++) VREPController.loadModel(argv[i][0]); 
+			// Ajout des Shuttle dans la simulation
+			for(int i=1;i<=argc-1;i++) VREPController.loadModel(argv[i][0]);
 
-			// Demarrage de la commande_locale pour avoir la premiere image
+			// Demarrage de la simu pour avoir la premiere image
 			VREPController.play();
-			// Pause pour laisser à l'utilisateur le soin de Commencer la commande_locale
+
+			// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
 			VREPController.pause();
 
-			while (ros::ok())
+			while (ros::ok()) // Tant que ROS est actif,
 			{
-				ros::spinOnce();
+				ros::spinOnce(); // on lance les callback correspondant aux messages entrants.
 			}				
 				
-			userInterface.close();
+			userInterface.close(); // Si Ctrl+C -> On ferme la fenetre de l'UI et on quitte la simulation
 			VREPController.close();
 			return 0;
 }

@@ -17,10 +17,14 @@
 
 #include <commande_locale/Msg_SensorState.h>
 
+// l'UI doit pouvoir controller la simu (Play & Pause)
 UI::UI(vrepController* VREPContrl)
 {
 	VREPController = VREPContrl;
 }
+
+/* On actualise les aiguillages (On dessine des cercles gris, sur lequel 
+on rajoute une droite ou un arc de cercle pour afficher l'etat de l'aiguillage) */
 void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(21, 241), 17, cv::Scalar(200,200,200), -1); //A01
@@ -63,6 +67,8 @@ void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 
 	update();
 }
+
+// On actualise l'etat des capteurs des stations de travail (cercle rouge ou vert)
 void UI::DrawStationSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(100, 346), 5, cv::Scalar(0,255*SensorState.CPI[1],255-255*SensorState.CPI[1]), -1, 8 );
@@ -76,6 +82,8 @@ void UI::DrawStationSensorImg(commande_locale::Msg_SensorState SensorState)
 
 	update();
 }
+
+// On actualise l'etat des capteurs des rails (cercle rouge ou vert)
 void UI::DrawRailSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageSensor, cv::Point(45, 349), 5, cv::Scalar(0,255*SensorState.CP[1],255-255*SensorState.CP[1]), -1, 8 );
@@ -108,26 +116,32 @@ void UI::DrawRailSensorImg(commande_locale::Msg_SensorState SensorState)
 
     	update();
 }
+
+// On intègre le stream de la simu et l'états des capteurs et aiguillage dans l'UI
 void UI::update()
 {
 	imageSimu.copyTo(imageTot.rowRange(18,530).colRange(78,1102));
  	imageSensor.copyTo(imageTot.rowRange(570,936).colRange(78,1102));
 			
- 	cv::imshow("commande_locale", imageTot);
+ 	cv::imshow("Simulation", imageTot);
 }
 
+// Fonction Callback du Stream de la simu
 void UI::getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 {
 	imageSimu = cv_bridge::toCvShare(msg, "bgr8")->image;
 	update();
 }
 
+// Fonction callback des infos sur la souris
 void onMouse(int event, int x, int y, int, void* userdata)
 {
     UI* ui = static_cast<UI*>(userdata);
     ui->onMouse_internal(event, x, y);
 }
 
+/* Fonction appellée pour mettre Play ou Pause à la simu 
+et changer l'etat des boutons, en fonction de la position de la souris */
 void UI::onMouse_internal( int event, int x, int y)
 {
 	static vrep_common::simRosStartSimulation srv_StartSimulation;		
@@ -159,6 +173,7 @@ void UI::onMouse_internal( int event, int x, int y)
 	}
 }
 
+
 void UI::init(ros::NodeHandle nh){
 	imageSensor = cv::imread("img/Schema_cellule.png",CV_LOAD_IMAGE_COLOR);
 	imageSimu = cv::Mat::zeros(512, 1024, CV_8UC3 );
@@ -178,18 +193,19 @@ void UI::init(ros::NodeHandle nh){
 	pauseButton_Down.copyTo(imageTot.rowRange(545,570).colRange(617,727));
 
 	// Window
-		cv::namedWindow("commande_locale");
-		cv::startWindowThread();
-		cv::moveWindow("commande_locale",0,0);
-		cv::setMouseCallback("commande_locale", onMouse,this);
+	cv::namedWindow("Simulation");
+	cv::startWindowThread();
+	cv::moveWindow("Simulation",0,0);
+	cv::setMouseCallback("Simulation", onMouse,this);
+
 	// Subscribe
 	image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("vrep/VisionSensorData", 1, &UI::getSimuStream, this);
 
-	mode = 0;
+	mode = 0; // Mode 0 : Pause - Mode 1 : Play
 }
 
+// On ferme la fenetre de Simulation
 void UI::close(){
-	cv::destroyWindow("view");
+	cv::destroyWindow("Simulation");
 }
-

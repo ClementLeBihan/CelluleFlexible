@@ -5,10 +5,8 @@
  * ********************************* *
 */
 
-
 #include "inOutController.h"
 
-#include <std_msgs/Int32.h>
 #include <ros/ros.h>
 
 // Used API services:
@@ -18,12 +16,15 @@
 #include <commande_locale/Msg_SwitchControl.h>
 #include <commande_locale/Msg_StopControl.h>
 #include <commande_locale/Msg_SensorState.h>
+#include <std_msgs/Int32.h>
 
+// inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
 inOutController::inOutController(UI* usrInt)
 {
 	userInterface = usrInt;
 }
 
+// Fonction Callback pour les capteurs sur les rails
 void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=16;i++) SensorState.PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
@@ -32,6 +33,7 @@ void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 	planifRailSensorState.publish(SensorState);
 }
 
+// Fonction Callback pour les capteurs sur les aiguillages
 void inOutController::SensorCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=12;i++){
@@ -42,6 +44,7 @@ void inOutController::SensorCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 	planifRailSensorState.publish(SensorState);
 }
 
+// Fonction Callback pour les capteurs sur les stations de travail
 void inOutController::SensorCallbackStation(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=8;i++) SensorState.CPI[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
@@ -49,6 +52,7 @@ void inOutController::SensorCallbackStation(const std_msgs::Int32::ConstPtr& msg
 	planifRailSensorState.publish(SensorState);
 }
 
+// Fonction Callback pour les actionneurs sur les aiguillages
 void inOutController::StateSwitchCallBack(const commande_locale::Msg_SwitchControl::ConstPtr&  msg)
 {
 	int SwitchRightControl(0), SwitchLeftControl(0), SwitchLockControl(0);
@@ -75,6 +79,7 @@ void inOutController::StateSwitchCallBack(const commande_locale::Msg_SwitchContr
 	VREPSwitchControllerLock.publish(Lock);
 }
 
+// Fonction Callback pour les actionneurs sur les stops
 void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg)
 {
 	int StopControlInt(0), GoControlInt(0);
@@ -96,6 +101,7 @@ void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::
 	VREPGoController.publish(Go);
 }
 
+// On s'abonne aux topic de VREP et du noeud Planificateur + On se prepare à publier sur les topic de la commande_locale
 void inOutController::init(ros::NodeHandle nh)
 {
 	// Subscribe

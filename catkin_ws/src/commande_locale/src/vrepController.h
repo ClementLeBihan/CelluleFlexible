@@ -5,7 +5,6 @@
  * ********************************* *
 */
 
-
 #ifndef VREP_CONTROLLER
 #define VREP_CONTROLLER
 
