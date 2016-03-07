@@ -10,7 +10,7 @@
 
 ## TO DO
 
-1. **in ~/.bashrc, Add this lines :**
+1. **in ~/.bashrc, add these lines :**
 	- source /opt/ros/jade/setup.bash
 	- export VREP_ROOT_DIR=~/CelluleFlexible/V-Rep/
 	- source ~/CelluleFlexible/catkin_ws/devel/setup.bash
