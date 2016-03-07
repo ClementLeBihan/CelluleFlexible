@@ -1,0 +1,2 @@
+commande_locale:planificateur:vrep_common
+-DCATKIN_DEVEL_PREFIX=/home/etudiant/CelluleFlexible/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/etudiant/CelluleFlexible/catkin_ws/install -G Unix Makefiles

@@ -1,0 +1,8 @@
+prefix=/home/etudiant/CelluleFlexible/catkin_ws/devel
+
+Name: commande_locale
+Description: Description of commande_locale
+Version: 3.1.2
+Cflags: -I/home/etudiant/CelluleFlexible/catkin_ws/devel/include
+Libs: -L/home/etudiant/CelluleFlexible/catkin_ws/devel/lib 
+Requires: message_runtime

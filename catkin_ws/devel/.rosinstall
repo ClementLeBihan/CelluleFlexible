@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/etudiant/CelluleFlexible/catkin_ws/devel/setup.sh
