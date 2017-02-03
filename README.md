@@ -1,5 +1,7 @@
 # Projet_Long GEA N7 2016
 
+[![Join the chat at https://gitter.im/ClementLeBihan/CelluleFlexible](https://badges.gitter.im/ClementLeBihan/CelluleFlexible.svg)](https://gitter.im/ClementLeBihan/CelluleFlexible?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > Simulation of a transport network
 
 ## Auteurs
